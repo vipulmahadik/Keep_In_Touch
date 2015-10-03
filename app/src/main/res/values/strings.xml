@@ -8,4 +8,6 @@
     <string name="title_activity_signup">Signup</string>
     <string name="title_activity_login">Login</string>
     <string name="title_activity_dispatch">dispatch</string>
+    <string name="title_activity_friend_list">friend_list</string>
+    <string name="title_activity_chat_item">chat_item</string>
 </resources>

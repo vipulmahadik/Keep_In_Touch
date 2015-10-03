@@ -38,23 +38,22 @@ public class Signup extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 boolean validationerror = false;
-                StringBuilder validationmsg = new StringBuilder("Please ");
+                StringBuilder validationmsg = new StringBuilder(" ");
 
-                if(username == null){
-                    validationmsg.append("enter username ");
+                if(username.getText().toString().trim().length() < 1){
+                    validationmsg.append("Please enter username ");
                     validationerror=true;
                 }
                 if(!(password.getText().toString().equals(passwordAgainView.getText().toString()))){
-                    validationmsg.append("password don't match");
-
+                    validationmsg.append("Entered password don't match");
                     validationerror=true;
                 }
-                if (password==null){
-                    validationmsg.append("enter password");
+                if (password.getText().toString().trim().length() < 1){
+                    validationmsg.append("Please enter password");
                     validationerror=true;
                 }
-                if (passwordAgainView==null){
-                    validationmsg.append("enter password");
+                if (passwordAgainView.getText().toString().trim().length() < 1){
+                    validationmsg.append("Please re-enter password");
                     validationerror=true;
                 }
 

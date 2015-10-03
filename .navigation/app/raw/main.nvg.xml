@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<navigationModel
+  ns = "http://schemas.android.com?import=com.android.tools.idea.editors.navigation.model.*">
+  <locations  
+    class = "java.util.ArrayList">
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.example.vipul.splash.MainActivity"/>
+      <point      
+        x = "500"      
+        y = "6160"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.example.vipul.splash.MainActivity"/>
+      <point      
+        x = "2080"      
+        y = "6160"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.example.vipul.splash.LoginOrSignup"/>
+      <point      
+        x = "500"      
+        y = "10200"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.example.vipul.splash.LoginOrSignup"/>
+      <point      
+        x = "2080"      
+        y = "10200"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.example.vipul.splash.chat_item"/>
+      <point      
+        x = "2080"      
+        y = "14240"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.example.vipul.splash.chat_item"/>
+      <point      
+        x = "500"      
+        y = "14240"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.example.vipul.splash.dispatch"/>
+      <point      
+        x = "500"      
+        y = "100"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.example.vipul.splash.dispatch"/>
+      <point      
+        x = "2080"      
+        y = "100"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.example.vipul.splash.friend_list"/>
+      <point      
+        x = "500"      
+        y = "2120"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.example.vipul.splash.friend_list"/>
+      <point      
+        x = "2080"      
+        y = "2120"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.example.vipul.splash.Signup"/>
+      <point      
+        x = "500"      
+        y = "4140"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.example.vipul.splash.Signup"/>
+      <point      
+        x = "2080"      
+        y = "4140"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.example.vipul.splash.Login"/>
+      <point      
+        x = "500"      
+        y = "8180"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.example.vipul.splash.Login"/>
+      <point      
+        x = "2080"      
+        y = "8180"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.MenuState"      
+        className = "com.example.vipul.splash.splash_screen"/>
+      <point      
+        x = "2080"      
+        y = "12220"/>
+    </statePointEntry>
+    <statePointEntry>
+      <state      
+        class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
+        className = "com.example.vipul.splash.splash_screen"/>
+      <point      
+        x = "500"      
+        y = "12220"/>
+    </statePointEntry>
+  </locations>
+</navigationModel>

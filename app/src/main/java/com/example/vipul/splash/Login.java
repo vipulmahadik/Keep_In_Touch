@@ -39,11 +39,11 @@ public class Login extends ActionBarActivity {
                 boolean validationerror = false;
                 StringBuilder validationmsg = new StringBuilder("Please ");
 
-                if(username == null){
+                if(username.getText().toString().trim().length() < 1){
                     validationmsg.append("enter username ");
                     validationerror=true;
                 }
-                if (password==null){
+                if (password.getText().toString().trim().length() < 1){
                     validationmsg.append("enter password");
                     validationerror=true;
                 }
@@ -63,7 +63,7 @@ public class Login extends ActionBarActivity {
                         if (e!=null){
                             Toast.makeText(Login.this,e.getMessage(),Toast.LENGTH_LONG).show();
                         }else {
-                            Intent i = new Intent(Login.this,MainActivity.class);
+                            Intent i = new Intent(Login.this,friend_list.class);
                             i.addFlags(i.FLAG_ACTIVITY_CLEAR_TASK | i.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(i);
                         }

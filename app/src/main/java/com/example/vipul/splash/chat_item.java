@@ -1,38 +1,24 @@
 package com.example.vipul.splash;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.parse.Parse;
-import com.parse.ParseUser;
 
-
-public class dispatch extends Activity {
+public class chat_item extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dispatch);
-
-        if(ParseUser.getCurrentUser() != null){
-            startActivity(new Intent(this,friend_list.class));
-        }
-        else{
-            startActivity(new Intent(this,LoginOrSignup.class));
-        }
-        finish();
-
+        setContentView(R.layout.activity_chat_item);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_dispatch, menu);
+        getMenuInflater().inflate(R.menu.menu_chat_item, menu);
         return true;
     }
 
