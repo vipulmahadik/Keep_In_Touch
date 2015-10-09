@@ -1,6 +1,13 @@
 package com.example.vipul.splash;
 
+import android.app.Application;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,12 +16,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -24,6 +36,10 @@ import java.util.List;
 public class friend_list extends ActionBarActivity {
 
 
+    private String latituteField;
+    private String longitudeField;
+    private LocationManager locationManager;
+    private String provider;
     private ArrayList<ParseUser> ulist;
 
     ParseUser user= new ParseUser();
@@ -32,7 +48,6 @@ public class friend_list extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
-
         updateUserStatus(true);
     }
 
@@ -76,6 +91,12 @@ public class friend_list extends ActionBarActivity {
         loadList();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+
     private void loadList() {
         final ProgressDialog dlg=new ProgressDialog(friend_list.this);
         dlg.setTitle("Please wait.. loading users");
@@ -104,6 +125,8 @@ public class friend_list extends ActionBarActivity {
         });
     }
 
+
+
     private class UserAdapter extends BaseAdapter{
 
         @Override
@@ -129,6 +152,7 @@ public class friend_list extends ActionBarActivity {
             final ParseUser c= getItem(i);
 
             TextView label= (TextView)view.findViewById(R.id.label);
+            final EditText t1=(EditText)view.findViewById(R.id.text1);
             label.setText(c.getUsername());
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -136,8 +160,33 @@ public class friend_list extends ActionBarActivity {
                     Toast.makeText(friend_list.this,c.getUsername(),Toast.LENGTH_LONG).show();
                 }
             });
+            Button b1= (Button) view.findViewById(R.id.button1);
+            b1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                    installation.put("user",ParseUser.getCurrentUser());
+                    installation.saveInBackground();
+
+
+                    ParseQuery pushQuery = ParseInstallation.getQuery();
+
+// Send push notification to query
+
+                    ParsePush push = new ParsePush();
+//                    Location l;
+//                    l= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    push.setQuery(pushQuery); // Set our Installation query
+                    push.setMessage(t1.getText().toString());
+                    push.sendInBackground();
+//                    Intent i= new Intent(friend_list.this,MainActivity.class);
+//                    i.putExtra("Lati", l.getLatitude()+"");
+//                    i.putExtra("Longi", l.getLongitude()+"");
+//                    startActivity(i);
+                }
+            });
             return view;
         }
-    }
+   }
 
 }
