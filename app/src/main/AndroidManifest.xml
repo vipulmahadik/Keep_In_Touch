@@ -119,7 +119,7 @@
         <activity
             android:name=".friend_list"
             android:label="@string/title_activity_friend_list"
-            android:theme="@style/AppTheme1">
+            android:theme="@style/AppTheme1" >
         </activity>
         <activity
             android:name=".chat_item"
@@ -144,6 +144,10 @@
         <activity
             android:name=".DrawerHeader"
             android:label="@string/title_activity_drawer_header" >
+        </activity>
+        <activity
+            android:name=".EventPage"
+            android:label="@string/title_activity_event_page" >
         </activity>
     </application>
 

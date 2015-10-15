@@ -17,4 +17,5 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_main_activity2">MainActivity2Activity</string>
     <string name="title_activity_drawer_header">drawerheader</string>
+    <string name="title_activity_event_page">EventPage</string>
 </resources>
