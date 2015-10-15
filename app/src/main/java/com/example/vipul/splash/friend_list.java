@@ -8,8 +8,13 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +37,20 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 
 public class friend_list extends ActionBarActivity {
 
@@ -41,6 +60,9 @@ public class friend_list extends ActionBarActivity {
     private LocationManager locationManager;
     private String provider;
     private ArrayList<ParseUser> ulist;
+    @InjectView(R.id.drawer_layout) DrawerLayout drawerLayout;
+    @InjectView(R.id.toolbar) Toolbar toolbar;
+    @InjectView(R.id.drawer_recyclerView) RecyclerView drawerRecyclerView;
 
     ParseUser user= new ParseUser();
 
@@ -48,40 +70,33 @@ public class friend_list extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
-        updateUserStatus(true);
+        ButterKnife.inject(this);
+
+        setSupportActionBar(toolbar);
+
+        ActionNew();
     }
 
-    public void updateUserStatus(boolean b) {
-        user.put("online",b);
-        user.saveEventually();
+    private void ActionNew() {
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+
+        List<String> rows = new ArrayList<>();
+        rows.add("Option 1");
+        rows.add("Option 2: A longer option");
+        rows.add("Option 3: The longest option of all");
+
+        DrawerAdapter drawerAdapter = new DrawerAdapter(rows);
+        drawerRecyclerView.setAdapter(drawerAdapter);
+        drawerRecyclerView.setHasFixedSize(true);
+        drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_friend_list, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        updateUserStatus(false);
 
     }
 
@@ -179,10 +194,8 @@ public class friend_list extends ActionBarActivity {
                     push.setQuery(pushQuery); // Set our Installation query
                     push.setMessage(t1.getText().toString());
                     push.sendInBackground();
-//                    Intent i= new Intent(friend_list.this,MainActivity.class);
-//                    i.putExtra("Lati", l.getLatitude()+"");
-//                    i.putExtra("Longi", l.getLongitude()+"");
-//                    startActivity(i);
+                    Intent i= new Intent(friend_list.this,MainActivity.class);
+                    startActivity(i);
                 }
             });
             return view;

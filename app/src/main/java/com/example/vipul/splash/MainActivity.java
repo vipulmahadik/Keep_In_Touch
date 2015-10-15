@@ -5,10 +5,16 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -17,16 +23,23 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
 
-public class MainActivity extends ActionBarActivity implements LocationListener {
+public class MainActivity extends ActionBarActivity {
 
     private GoogleMap googleMap;
     private LocationManager locationManager;
+    private ParseGeoPoint point1;
+    double x,y;
 
+    private ParseUser user= ParseUser.getCurrentUser();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         try {
             // Loading map
             initilizeMap();
@@ -47,24 +60,46 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
                         "Sorry! unable to create maps", Toast.LENGTH_SHORT)
                         .show();
             }
-            double latitude = Double.parseDouble(getIntent().getExtras().getString("Lati"));
-            double longitude = Double.parseDouble(getIntent().getExtras().getString("Longi"));
+
+
+
+            locationManager=(LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            LocationListener listener= new LocationListener() {
+                @Override
+                public void onLocationChanged(Location l) {
+
+                    Toast.makeText(MainActivity.this,l.getLatitude()+" and "+l.getLongitude(),Toast.LENGTH_LONG).show();
 
 // create marker
-            MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Hello Maps ");
+                    MarkerOptions marker = new MarkerOptions().position(new LatLng(l.getLatitude(), l.getLongitude())).title("Hello Maps ");
 
 // adding marker
-            googleMap.addMarker(marker);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude),5));
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+                    googleMap.addMarker(marker);
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(l.getLatitude(), l.getLongitude()), 5));
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+                    x=l.getLatitude();
+                    y=l.getLongitude();
+                    point1= new ParseGeoPoint(x,y);
+                    user.put("coords",point1);
+                    user.saveEventually();
+                }
 
-            Location l;
-            String provider;
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            provider = locationManager.getBestProvider(criteria, false);
-            l= locationManager.getLastKnownLocation(provider);
-            Toast.makeText(MainActivity.this,l.getLatitude()+" and "+l.getLongitude(),Toast.LENGTH_LONG).show();
+                @Override
+                public void onStatusChanged(String s, int i, Bundle bundle) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String s) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String s) {
+
+                }
+            };
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,10,listener);
         }
     }
 
@@ -94,25 +129,5 @@ public class MainActivity extends ActionBarActivity implements LocationListener 
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
     }
 }

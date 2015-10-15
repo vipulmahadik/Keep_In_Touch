@@ -10,4 +10,11 @@
     <string name="title_activity_dispatch">dispatch</string>
     <string name="title_activity_friend_list">friend_list</string>
     <string name="title_activity_chat_item">chat_item</string>
+    <string name="title_activity_item_row">item_row</string>
+    <string name="title_activity_header">header</string>
+    <string name="title_activity_tool_bar">Tool_bar</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_main_activity2">MainActivity2Activity</string>
+    <string name="title_activity_drawer_header">drawerheader</string>
 </resources>
