@@ -18,4 +18,7 @@
     <string name="title_activity_main_activity2">MainActivity2Activity</string>
     <string name="title_activity_drawer_header">drawerheader</string>
     <string name="title_activity_event_page">EventPage</string>
+    <string name="title_activity_map_me">MapMe</string>
+    <string name="title_activity_event_view">EventView</string>
+    <string name="title_activity_event_details">EventDetails</string>
 </resources>

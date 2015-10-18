@@ -130,24 +130,24 @@
             android:label="@string/title_activity_item_row" >
         </activity>
         <activity
-            android:name=".header"
-            android:label="@string/title_activity_header" >
-        </activity>
-        <activity
-            android:name=".Tool_bar"
-            android:label="@string/title_activity_tool_bar" >
-        </activity>
-        <activity
-            android:name=".MainActivity2Activity"
-            android:label="@string/title_activity_main_activity2" >
-        </activity>
-        <activity
-            android:name=".DrawerHeader"
-            android:label="@string/title_activity_drawer_header" >
-        </activity>
-        <activity
             android:name=".EventPage"
-            android:label="@string/title_activity_event_page" >
+            android:label="@string/title_activity_event_page"
+            android:theme="@style/AppTheme1" >
+        </activity>
+        <activity
+            android:name=".MapMe"
+            android:label="@string/title_activity_map_me"
+            android:theme="@style/AppTheme1" >
+        </activity>
+        <activity
+            android:name=".EventView"
+            android:label="@string/title_activity_event_view"
+            android:theme="@style/AppTheme1">
+        </activity>
+        <activity
+            android:name=".EventDetails"
+            android:label="@string/title_activity_event_details"
+            android:theme="@style/AppTheme1" >
         </activity>
     </application>
 

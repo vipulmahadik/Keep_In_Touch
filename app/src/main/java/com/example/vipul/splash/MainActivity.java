@@ -1,6 +1,7 @@
 package com.example.vipul.splash;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -23,8 +24,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseInstallation;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -32,6 +40,7 @@ public class MainActivity extends ActionBarActivity {
     private LocationManager locationManager;
     private ParseGeoPoint point1;
     double x,y;
+    Intent i=getIntent();
 
     private ParseUser user= ParseUser.getCurrentUser();
     @Override
@@ -62,44 +71,52 @@ public class MainActivity extends ActionBarActivity {
             }
 
 
-
-            locationManager=(LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            LocationListener listener= new LocationListener() {
-                @Override
-                public void onLocationChanged(Location l) {
-
-                    Toast.makeText(MainActivity.this,l.getLatitude()+" and "+l.getLongitude(),Toast.LENGTH_LONG).show();
-
-// create marker
-                    MarkerOptions marker = new MarkerOptions().position(new LatLng(l.getLatitude(), l.getLongitude())).title("Hello Maps ");
+            MarkerOptions marker1 = new MarkerOptions().position(new LatLng(getIntent().getExtras().getDouble("latitude"), getIntent().getExtras().getDouble("longitude"))).title(getIntent().getExtras().getString("name"));
 
 // adding marker
-                    googleMap.addMarker(marker);
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(l.getLatitude(), l.getLongitude()), 5));
-                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
-                    x=l.getLatitude();
-                    y=l.getLongitude();
-                    point1= new ParseGeoPoint(x,y);
-                    user.put("coords",point1);
-                    user.saveEventually();
-                }
+            googleMap.addMarker(marker1);
 
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(getIntent().getExtras().getDouble("latitude"), getIntent().getExtras().getDouble("longitude")), 5));
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
 
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-
-                }
-            };
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,10,listener);
+//            locationManager=(LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//            LocationListener listener= new LocationListener() {
+//                @Override
+//                public void onLocationChanged(Location l) {
+//
+//                    Toast.makeText(MainActivity.this,l.getLatitude()+" and "+l.getLongitude(),Toast.LENGTH_LONG).show();
+//
+//// create marker
+//                    MarkerOptions marker = new MarkerOptions().position(new LatLng(l.getLatitude(), l.getLongitude())).title("Hello Maps ");
+//
+//// adding marker
+//                    googleMap.addMarker(marker);
+//
+//                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(l.getLatitude(), l.getLongitude()), 5));
+//                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+//                    x=l.getLatitude();
+//                    y=l.getLongitude();
+//                    point1= new ParseGeoPoint(x,y);
+//                    user.put("coords",point1);
+//                    user.saveEventually();
+//                }
+//
+//                @Override
+//                public void onStatusChanged(String s, int i, Bundle bundle) {
+//
+//                }
+//
+//                @Override
+//                public void onProviderEnabled(String s) {
+//
+//                }
+//
+//                @Override
+//                public void onProviderDisabled(String s) {
+//
+//                }
+//            };
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,10,listener);
         }
     }
 

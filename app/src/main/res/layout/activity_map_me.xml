@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="com.example.vipul.splash.MapMe">
 
     <!-- Content Section -->
     <LinearLayout
@@ -16,15 +18,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/ColorPrimary"
-            android:titleTextAppearance="@color/light_font"
-            />
+            android:elevation="4dp" />
 
-
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/user_list">
-            </ListView>
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.MapFragment" />
 
     </LinearLayout>
 

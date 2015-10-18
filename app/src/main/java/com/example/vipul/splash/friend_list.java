@@ -15,8 +15,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,6 +31,7 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
@@ -63,7 +66,8 @@ public class friend_list extends ActionBarActivity {
     @InjectView(R.id.drawer_layout) DrawerLayout drawerLayout;
     @InjectView(R.id.toolbar) Toolbar toolbar;
     @InjectView(R.id.drawer_recyclerView) RecyclerView drawerRecyclerView;
-
+    DrawerLayout Drawer;                                  // Declaring DrawerLayout
+    ActionBarDrawerToggle mDrawerToggle;                  // Declaring Action Bar Drawer Toggle
     ParseUser user= new ParseUser();
 
     @Override
@@ -83,15 +87,94 @@ public class friend_list extends ActionBarActivity {
         drawerToggle.syncState();
 
         List<String> rows = new ArrayList<>();
-        rows.add("Option 1");
-        rows.add("Option 2: A longer option");
-        rows.add("Option 3: The longest option of all");
+        rows.add("Find Friends");
+        rows.add("Create Event");
+        rows.add("View Events");
+        rows.add("Map Me");
 
         DrawerAdapter drawerAdapter = new DrawerAdapter(rows);
         drawerRecyclerView.setAdapter(drawerAdapter);
         drawerRecyclerView.setHasFixedSize(true);
         drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView.LayoutManager mLayoutManager;
+
+        final GestureDetector mGestureDetector = new GestureDetector(friend_list.this, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+        });
+
+        drawerRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+                View child = recyclerView.findChildViewUnder(motionEvent.getX(),motionEvent.getY());
+
+
+
+                if(child!=null && mGestureDetector.onTouchEvent(motionEvent)){
+                    Drawer.closeDrawers();
+                    Toast.makeText(friend_list.this,"The Item Clicked is: "+recyclerView.getChildPosition(child),Toast.LENGTH_SHORT).show();
+                    switch (recyclerView.getChildPosition(child)){
+                        case 1:
+                            break;
+                        case 2:
+                            startActivity(new Intent(friend_list.this,EventPage.class));
+                            break;
+                        case 3:
+                            startActivity(new Intent(friend_list.this,EventView.class));
+                            break;
+                        case 4:
+                            startActivity(new Intent(friend_list.this,MapMe.class));
+                            break;
+                    }
+
+                    return true;
+
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+            }
+        });
+
+        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
+
+        drawerRecyclerView.setLayoutManager(mLayoutManager);                 // Setting the layout Manager
+
+
+        Drawer = (DrawerLayout) findViewById(R.id.drawer_layout);        // Drawer object Assigned to the view
+        mDrawerToggle = new ActionBarDrawerToggle(this,Drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close){
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
+                // open I am not going to put anything here)
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                // Code here will execute once drawer is closed
+            }
+
+
+
+        }; // Drawer Toggle Object Made
+        Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
+        mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
+
     }
+
+
+
+
 
 
     @Override
@@ -125,19 +208,35 @@ public class friend_list extends ActionBarActivity {
                     ulist=new ArrayList<ParseUser>(parseUsers);
                     ListView li=(ListView)findViewById(R.id.user_list);
                     li.setAdapter(new UserAdapter());
-                    li.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-
-                        }
-                    });
                 }
                 else {
                     Toast.makeText(friend_list.this,"Errorrrr",Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_friend_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -167,16 +266,8 @@ public class friend_list extends ActionBarActivity {
             final ParseUser c= getItem(i);
 
             TextView label= (TextView)view.findViewById(R.id.label);
-            final EditText t1=(EditText)view.findViewById(R.id.text1);
             label.setText(c.getUsername());
             view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(friend_list.this,c.getUsername(),Toast.LENGTH_LONG).show();
-                }
-            });
-            Button b1= (Button) view.findViewById(R.id.button1);
-            b1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     ParseInstallation installation = ParseInstallation.getCurrentInstallation();
@@ -189,12 +280,18 @@ public class friend_list extends ActionBarActivity {
 // Send push notification to query
 
                     ParsePush push = new ParsePush();
-//                    Location l;
-//                    l= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    pushQuery.whereEqualTo("username", c.getUsername());
+                    ParseGeoPoint g=(ParseGeoPoint)c.get("coords");
                     push.setQuery(pushQuery); // Set our Installation query
-                    push.setMessage(t1.getText().toString());
+                    push.setMessage(g.getLatitude()+"  "+g.getLongitude());
+                    Toast.makeText(friend_list.this,g.getLatitude()+"  "+g.getLongitude(),Toast.LENGTH_LONG).show();
                     push.sendInBackground();
                     Intent i= new Intent(friend_list.this,MainActivity.class);
+                    i.putExtra("name",c.getUsername());
+                    Bundle b = new Bundle();
+                    b.putDouble("latitude", g.getLatitude());
+                    b.putDouble("longitude", g.getLongitude());
+                    i.putExtras(b);
                     startActivity(i);
                 }
             });
