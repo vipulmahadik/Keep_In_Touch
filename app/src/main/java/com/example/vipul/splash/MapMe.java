@@ -219,8 +219,10 @@ public class MapMe extends ActionBarActivity {
             else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,10000,10,listener);
             }
-            else
+            else if (locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER))
                 locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,10000,10,listener);
+            else
+                Toast.makeText(MapMe.this,"Error with connection",Toast.LENGTH_LONG).show();
         }
     }
 

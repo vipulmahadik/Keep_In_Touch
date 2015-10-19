@@ -15,15 +15,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +61,7 @@ public class EventView extends ActionBarActivity {
     RecyclerView drawerRecyclerView;
     DrawerLayout Drawer;                                  // Declaring DrawerLayout
     ActionBarDrawerToggle mDrawerToggle;
+    List<ParseObject> ulist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,48 +74,20 @@ public class EventView extends ActionBarActivity {
 
         ActionNew();
         context = this;
-        tasks = new ArrayList<String>();
-        ojbects = new ArrayList<String>();
 
-        listView = (ListView) findViewById(R.id.eventlist);
+//        listView = (ListView) findViewById(R.id.eventlist);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Events");
-        query.orderByDescending("CreatedAt");
         query.findInBackground(new FindCallback<ParseObject>() {
-
             @Override
-            public void done(List<ParseObject> postList, ParseException e) {
-                if (e == null) {
-                    // If there are results, update the list of posts
-                    // and notify the adapter
-                    tasks.clear();
-                    for (ParseObject post : postList) {
-
-                        String objid = post.getObjectId();
-                        String row = "Name of the Event : " + post.getString("name") + "\n" + "Description :" + post.getString("description");
-
-                        ojbects.add(objid);
-
-                        tasks.add(row);
-
-                    }
-                    adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, tasks);
-                    listView.setAdapter(adapter);
-                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Intent intent = new Intent(EventView.this, EventDetails.class);
-                            intent.putExtra("objectId", ojbects.get(position));
-                            startActivity(intent);
-                            finish();
-
-                        }
-                    });
-                } else {
-                    Log.d(getClass().getSimpleName(), "Error: " + e.getMessage());
-                }
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                ulist=new ArrayList<ParseObject>(parseObjects);
+                ListView li=(ListView)findViewById(R.id.eventlist);
+                li.setAdapter(new UserAdapter());
             }
         });
+
+
 
     }
 
@@ -220,5 +203,50 @@ public class EventView extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class UserAdapter extends BaseAdapter{
+
+        @Override
+        public int getCount() {
+            return ulist.size();
+        }
+
+        @Override
+        public ParseObject getItem(int i) {
+            return ulist.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            if (view==null){
+                view=getLayoutInflater().inflate(R.layout.event_row, null);
+            }
+            final ParseObject c= getItem(i);
+
+            TextView label= (TextView)view.findViewById(R.id.eventname);
+            TextView from= (TextView)view.findViewById(R.id.from);
+            TextView to= (TextView)view.findViewById(R.id.to);
+            TextView createdby= (TextView)view.findViewById(R.id.by);
+            from.setText(c.getString("eventdate"));
+            to.setText(c.getString("enddate"));
+            createdby.setText("created by: "+c.getString("createdby"));
+            label.setText(c.getString("name"));
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i=new Intent(EventView.this,EventDetails.class);
+                    i.putExtra("objectId",c.getObjectId());
+                    startActivity(i);
+                    finish();
+                }
+            });
+            return view;
+        }
     }
 }

@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,8 +24,10 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -45,6 +48,8 @@ public class EventPage extends ActionBarActivity {
     TextView fromdate,fromtime,todate,totime,name;
     EditText title,description;
     static final int DIALOG_ID=0;
+    ParseQuery<ParseObject> query;
+    String objectid;
 
     DrawerLayout Drawer;                                  // Declaring DrawerLayout
     ActionBarDrawerToggle mDrawerToggle;                  // Declaring Action Bar Drawer Toggle
@@ -76,37 +81,104 @@ public class EventPage extends ActionBarActivity {
         ActionNew();
 
         date_time_setter();
+        check_edit();
 
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ParseObject post = new ParseObject("Events");
-                post.put("name", String.valueOf(name.getText()));
-                post.put("eventdate", String.valueOf(fromdate.getText()));
-                post.put("eventtime", String.valueOf(fromtime.getText()));
-                post.put("enddate", String.valueOf(todate.getText()));
-                post.put("endtime", String.valueOf(totime.getText()));
-                post.put("description", String.valueOf(description.getText()));
-                post.put("createdby", String.valueOf(ParseUser.getCurrentUser().getUsername()));
-                post.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            Intent intent = new Intent(EventPage.this, EventView.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                    else
-                    {
-                        Toast.makeText(getApplicationContext(), "Event not Posted.Please Re-enter the details and post", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
+                try{
+                    if(getIntent().getExtras().getString("objectId")!=null){
+                        query.getInBackground(objectid, new GetCallback<ParseObject>() {
+                            public void done(ParseObject object, ParseException e) {
+                                if (e == null) {
+                                    object.put("name", String.valueOf(title.getText()));
+                                    object.put("eventdate", String.valueOf(fromdate.getText()));
+                                    object.put("eventtime", String.valueOf(fromtime.getText()));
+                                    object.put("enddate", String.valueOf(todate.getText()));
+                                    object.put("endtime", String.valueOf(totime.getText()));
+                                    object.put("description", String.valueOf(description.getText()));
+                                    object.put("createdby", String.valueOf(ParseUser.getCurrentUser().getUsername()));
+                                    object.saveInBackground(new SaveCallback() {
+                                                                @Override
+                                                                public void done(ParseException e) {
+                                                                    if (e == null) {
+                                                                        Intent intent = new Intent(EventPage.this, EventView.class);
+                                                                        startActivity(intent);
+                                                                        finish();
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Toast.makeText(getApplicationContext(), "Event not Posted.Please Re-enter the details and post", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                }
+                                                            }
 
-            );
+                                    );
+                                } else {
+                                    // something went wrong
+                                }
+                            }
+                        });
+                    }
+                    else{
+
+                        ParseObject post = new ParseObject("Events");
+                        post.put("name", String.valueOf(title.getText()));
+                        post.put("eventdate", String.valueOf(fromdate.getText()));
+                        post.put("eventtime", String.valueOf(fromtime.getText()));
+                        post.put("enddate", String.valueOf(todate.getText()));
+                        post.put("endtime", String.valueOf(totime.getText()));
+                        post.put("description", String.valueOf(description.getText()));
+                        post.put("createdby", String.valueOf(ParseUser.getCurrentUser().getUsername()));
+                        post.saveInBackground(new SaveCallback() {
+                                                  @Override
+                                                  public void done(ParseException e) {
+                                                      if (e == null) {
+                                                          Intent intent = new Intent(EventPage.this, EventView.class);
+                                                          startActivity(intent);
+                                                          finish();
+                                                      } else {
+                                                          Toast.makeText(getApplicationContext(), "Event not Posted.Please Re-enter the details and post", Toast.LENGTH_SHORT).show();
+                                                      }
+                                                  }
+                                              }
+
+                        );
+                    }
+
+                }catch (NullPointerException e){
+
+                }
+
         }
     });
+    }
+
+    private void check_edit() {
+        try {
+            if(getIntent().getExtras().getString("objectId")!=null){
+                objectid=getIntent().getExtras().getString("objectId");
+                query = ParseQuery.getQuery("Events");
+                query.getInBackground(objectid, new GetCallback<ParseObject>() {
+                    public void done(ParseObject object, ParseException e) {
+                        if (e == null) {
+                            title.setText(object.getString("name"));
+                            description.setText(object.getString("description"));
+                            fromdate.setText(object.getString("eventdate"));
+                            fromtime.setText(object.getString("eventtime"));
+                            todate.setText(object.getString("enddate"));
+                            totime.setText(object.getString("endtime"));
+                        } else {
+                            // something went wrong
+                        }
+                    }
+                });
+            }
+        }catch (NullPointerException e){
+
+        }
+
     }
 
     public void date_time_setter(){

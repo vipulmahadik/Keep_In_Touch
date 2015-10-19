@@ -42,6 +42,7 @@ public class EventDetails extends ActionBarActivity {
     ActionBarDrawerToggle mDrawerToggle;
     MenuItem del;
     String objectid;
+    TextView name,description,createdby,from,to;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +52,14 @@ public class EventDetails extends ActionBarActivity {
         ButterKnife.inject(this);
 
         setSupportActionBar(toolbar);
+        name=(TextView)findViewById(R.id.eventname);
+        description=(TextView)findViewById(R.id.description);
+        createdby=(TextView)findViewById(R.id.createdby);
+        from=(TextView)findViewById(R.id.fromvariable);
+        to=(TextView)findViewById(R.id.tovariable);
 
         ActionNew();
 
-        ed=(TextView)findViewById(R.id.evdetails);
 
         objectid=getIntent().getExtras().getString("objectId");
 
@@ -65,13 +70,12 @@ public class EventDetails extends ActionBarActivity {
         query.getInBackground(objectid, new GetCallback<ParseObject>() {
             public void done(ParseObject object, ParseException e) {
                 if (e == null) {
-                    event="Name of the Event : "+object.getString("ename") + "\n" + "Category : "+object.getString("eventdate")+"\n"+"Event Date :" + object.getString("Event_date")+"\n"+"Event Time :" + object.getString("Event_time")+
-                            "\n"+"Location : "+"\n"+object.getString("eventtime")+"\n"+object.getString("Event_add2")+"\n"+object.getString("Event_city")+"\n"+object.getString("Event_state")+"\n"+object.getString("Event_country")+"\n"+object.getNumber("Event_zipcode")+
-                            "\n"+"Description : "+object.getString("description");
-
-
+                    name.setText(object.getString("name"));
+                    description.setText(object.getString("description"));
+                    createdby.setText(object.getString("createdby"));
+                    from.setText(object.getString("eventdate")+ " "+ object.getString("eventtime"));
+                    to.setText(object.getString("enddate")+ " "+ object.getString("endtime"));
                     Log.d(getClass().getSimpleName(), "event: " + event);
-                    ed.setText(event);
                 } else {
                     // something went wrong
                 }
@@ -202,11 +206,19 @@ public class EventDetails extends ActionBarActivity {
                             e1.printStackTrace();
                         }
                         object.saveInBackground();
+                        startActivity(new Intent(EventDetails.this,EventView.class));
+                        finish();
                     } else {
                         // something went wrong
                     }
                 }
             });
+        }
+        if (id==R.id.edit){
+            Intent i =new Intent(EventDetails.this,EventPage.class);
+            i.putExtra("objectId",objectid);
+            startActivity(i);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

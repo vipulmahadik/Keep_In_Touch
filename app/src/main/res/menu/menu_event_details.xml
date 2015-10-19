@@ -8,5 +8,10 @@
         android:id="@+id/OK"
         android:orderInCategory="100"
         app:showAsAction="ifRoom"
-        android:title="OK" />
+        android:title="delete"/>
+    <item
+        android:id="@+id/edit"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
+        android:title="edit"/>
 </menu>
