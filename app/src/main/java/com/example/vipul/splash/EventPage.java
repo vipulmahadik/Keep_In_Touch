@@ -88,6 +88,8 @@ public class EventPage extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 try{
+                    Toast.makeText(getApplicationContext(), "Kuch to problem", Toast.LENGTH_SHORT).show();
+
                     if(getIntent().getExtras().getString("objectId")!=null){
                         query.getInBackground(objectid, new GetCallback<ParseObject>() {
                             public void done(ParseObject object, ParseException e) {
@@ -123,32 +125,32 @@ public class EventPage extends ActionBarActivity {
                     }
                     else{
 
-                        ParseObject post = new ParseObject("Events");
-                        post.put("name", String.valueOf(title.getText()));
-                        post.put("eventdate", String.valueOf(fromdate.getText()));
-                        post.put("eventtime", String.valueOf(fromtime.getText()));
-                        post.put("enddate", String.valueOf(todate.getText()));
-                        post.put("endtime", String.valueOf(totime.getText()));
-                        post.put("description", String.valueOf(description.getText()));
-                        post.put("createdby", String.valueOf(ParseUser.getCurrentUser().getUsername()));
-                        post.saveInBackground(new SaveCallback() {
-                                                  @Override
-                                                  public void done(ParseException e) {
-                                                      if (e == null) {
-                                                          Intent intent = new Intent(EventPage.this, EventView.class);
-                                                          startActivity(intent);
-                                                          finish();
-                                                      } else {
-                                                          Toast.makeText(getApplicationContext(), "Event not Posted.Please Re-enter the details and post", Toast.LENGTH_SHORT).show();
-                                                      }
-                                                  }
-                                              }
 
-                        );
                     }
 
                 }catch (NullPointerException e){
+                    ParseObject post = new ParseObject("Events");
+                    post.put("name", String.valueOf(title.getText()));
+                    post.put("eventdate", String.valueOf(fromdate.getText()));
+                    post.put("eventtime", String.valueOf(fromtime.getText()));
+                    post.put("enddate", String.valueOf(todate.getText()));
+                    post.put("endtime", String.valueOf(totime.getText()));
+                    post.put("description", String.valueOf(description.getText()));
+                    post.put("createdby", String.valueOf(ParseUser.getCurrentUser().getUsername()));
+                    post.saveInBackground(new SaveCallback() {
+                                              @Override
+                                              public void done(ParseException e) {
+                                                  if (e == null) {
+                                                      Intent intent = new Intent(EventPage.this, EventView.class);
+                                                      startActivity(intent);
+                                                      finish();
+                                                  } else {
+                                                      Toast.makeText(getApplicationContext(), "Event not Posted.Please Re-enter the details and post", Toast.LENGTH_SHORT).show();
+                                                  }
+                                              }
+                                          }
 
+                    );
                 }
 
         }
@@ -169,6 +171,8 @@ public class EventPage extends ActionBarActivity {
                             fromtime.setText(object.getString("eventtime"));
                             todate.setText(object.getString("enddate"));
                             totime.setText(object.getString("endtime"));
+                            submit.setText("Update Event");
+                            
                         } else {
                             // something went wrong
                         }
