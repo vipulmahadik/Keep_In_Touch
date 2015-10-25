@@ -125,6 +125,24 @@
                         android:layout_alignParentStart="true" />
 
                 </RelativeLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:text="Meet up Place"
+                    android:id="@+id/location_label"/>
+
+                <AutoCompleteTextView
+                    android:id="@+id/location"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:completionThreshold="3"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Members +"
+                    android:id="@+id/members"/>
 
                 <Button
                     android:layout_width="match_parent"

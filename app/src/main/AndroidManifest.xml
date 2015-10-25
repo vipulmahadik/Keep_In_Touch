@@ -142,12 +142,16 @@
         <activity
             android:name=".EventView"
             android:label="@string/title_activity_event_view"
-            android:theme="@style/AppTheme1">
+            android:theme="@style/AppTheme1" >
         </activity>
         <activity
             android:name=".EventDetails"
             android:label="@string/title_activity_event_details"
             android:theme="@style/AppTheme1" >
+        </activity>
+        <activity
+            android:name=".addmem"
+            android:label="@string/title_activity_addmem" >
         </activity>
     </application>
 

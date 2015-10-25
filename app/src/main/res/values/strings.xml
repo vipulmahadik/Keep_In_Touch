@@ -21,4 +21,5 @@
     <string name="title_activity_map_me">MapMe</string>
     <string name="title_activity_event_view">EventView</string>
     <string name="title_activity_event_details">EventDetails</string>
+    <string name="title_activity_addmem">addmem</string>
 </resources>
