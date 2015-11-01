@@ -2,6 +2,7 @@ package com.example.vipul.splash;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -46,6 +47,7 @@ public class MapMe extends ActionBarActivity {
     RecyclerView drawerRecyclerView;
     DrawerLayout Drawer;                                  // Declaring DrawerLayout
     ActionBarDrawerToggle mDrawerToggle;
+    MarkerOptions marker;
 
     private GoogleMap googleMap;
     private LocationManager locationManager;
@@ -131,6 +133,11 @@ public class MapMe extends ActionBarActivity {
             public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
 
             }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean b) {
+
+            }
         });
 
         mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
@@ -166,6 +173,7 @@ public class MapMe extends ActionBarActivity {
         if (googleMap == null) {
             googleMap = ((MapFragment) getFragmentManager().findFragmentById(
                     R.id.map)).getMap();
+            googleMap.setMyLocationEnabled(true);
 
             // check if map is created successfully or not
             if (googleMap == null) {
@@ -177,6 +185,18 @@ public class MapMe extends ActionBarActivity {
 
 
             locationManager=(LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            // Create a criteria object to retrieve provider
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            criteria.setPowerRequirement(Criteria.POWER_HIGH);
+
+            // Get the name of the best provider
+            String provider = locationManager.getBestProvider(criteria, true);
+            Location locListener = locationManager.getLastKnownLocation(provider);
+            marker = new MarkerOptions().position(new LatLng(locListener.getLatitude(), locListener.getLongitude())).title("Hello Maps ");
+            googleMap.addMarker(marker);
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(locListener.getLatitude(), locListener.getLongitude()), 5));
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
             LocationListener listener= new LocationListener() {
                 @Override
                 public void onLocationChanged(Location l) {
@@ -184,13 +204,11 @@ public class MapMe extends ActionBarActivity {
                     Toast.makeText(MapMe.this,l.getLatitude()+" and "+l.getLongitude(),Toast.LENGTH_LONG).show();
 
 // create marker
-                    MarkerOptions marker = new MarkerOptions().position(new LatLng(l.getLatitude(), l.getLongitude())).title("Hello Maps ");
-
+                    marker.position(new LatLng(l.getLatitude(), l.getLongitude())).title("Hello Maps ");
 // adding marker
-                    googleMap.addMarker(marker);
 
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(l.getLatitude(), l.getLongitude()), 5));
-                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
                     double x=l.getLatitude();
                     double y=l.getLongitude();
                     point1= new ParseGeoPoint(x,y);
@@ -219,8 +237,9 @@ public class MapMe extends ActionBarActivity {
             else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,10000,10,listener);
             }
-            else if (locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER))
-                locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,10000,10,listener);
+            else if (locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 10000, 10, listener);
+            }
             else
                 Toast.makeText(MapMe.this,"Error with connection",Toast.LENGTH_LONG).show();
         }

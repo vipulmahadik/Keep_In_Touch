@@ -21,6 +21,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
     <permission
         android:name="com.example.vipul.splash.permission.MAPS_RECEIVE"
@@ -152,6 +154,19 @@
         <activity
             android:name=".addmem"
             android:label="@string/title_activity_addmem" >
+        </activity>
+        <activity
+            android:name=".slider"
+            android:label="@string/title_activity_slider"
+            android:theme="@style/AppTheme1" >
+        </activity>
+        <activity
+            android:name=".invites"
+            android:label="@string/title_activity_invites" >
+        </activity>
+        <activity
+            android:name=".GetDirections"
+            android:label="@string/title_activity_get_directions" >
         </activity>
     </application>
 

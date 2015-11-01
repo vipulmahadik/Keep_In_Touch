@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -12,29 +13,44 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.GestureDetector;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,7 +64,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -66,19 +84,26 @@ public class EventPage extends ActionBarActivity {
     static final int DIALOG_ID=0;
     ParseQuery<ParseObject> query;
     String objectid;
-    Button addmembers;
     ArrayList<String> s;
+    ListView li;
+    ArrayList<ParseUser> ulist,users;
+    ArrayList<String> finaluser;
+    UserAdapter adapter;
 
     private static final String LOG_TAG = "Google Places Aut";
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
     private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
     private static final String OUT_JSON = "/json";
     private static final String API_KEY = "AIzaSyBmnmF1_Muz-Qa6o_eXPwzKGYfRR8PEp_w";
-
+    private static final String TAG = "DemoActivity";
 
 
     DrawerLayout Drawer;                                  // Declaring DrawerLayout
     ActionBarDrawerToggle mDrawerToggle;                  // Declaring Action Bar Drawer Toggle
+    Bundle b;
+    private SlidingUpPanelLayout mLayout;
+    ParseObject currentobject;
+    TextView t;
 
     @InjectView(R.id.drawer_layout) DrawerLayout drawerLayout;
     @InjectView(R.id.toolbar) Toolbar toolbar;
@@ -104,22 +129,14 @@ public class EventPage extends ActionBarActivity {
         submit=(Button)findViewById(R.id.submit);
         location=(AutoCompleteTextView) findViewById(R.id.location);
         location.setAdapter(new PlacesAutoCompleteAdapter(this, android.R.layout.simple_dropdown_item_1line));
-        addmembers=(Button)findViewById(R.id.members);
-
-        addmembers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(EventPage.this,addmem.class));
-            }
-        });
-
+        users=new ArrayList<>();
 
 
 
         ActionNew();
-        membercheck();
         date_time_setter();
         check_edit();
+        addslider();
 
 
         submit.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +149,7 @@ public class EventPage extends ActionBarActivity {
                         query.getInBackground(objectid, new GetCallback<ParseObject>() {
                             public void done(ParseObject object, ParseException e) {
                                 if (e == null) {
+                                    currentobject=object;
                                     object.put("name", String.valueOf(title.getText()));
                                     object.put("eventdate", String.valueOf(fromdate.getText()));
                                     object.put("eventtime", String.valueOf(fromtime.getText()));
@@ -139,16 +157,26 @@ public class EventPage extends ActionBarActivity {
                                     object.put("endtime", String.valueOf(totime.getText()));
                                     object.put("description", String.valueOf(description.getText()));
                                     object.put("createdby", String.valueOf(ParseUser.getCurrentUser().getUsername()));
+                                    object.put("place",String.valueOf(location.getText()));
                                     object.saveInBackground(new SaveCallback() {
                                                                 @Override
                                                                 public void done(ParseException e) {
                                                                     if (e == null) {
+                                                                        ParseQuery<ParseObject> q = ParseQuery.getQuery("Events");
+                                                                        q.whereEqualTo("name", String.valueOf(title.getText())).getFirstInBackground(new GetCallback<ParseObject>() {
+                                                                            @Override
+                                                                            public void done(ParseObject parseObject, ParseException e) {
+                                                                                for(ParseUser user : users){
+                                                                                    ParseObject o=new ParseObject("eventmember");
+                                                                                    o.put("e_name",parseObject.getObjectId());
+                                                                                    o.put("event_members",user.getObjectId());
+                                                                                    o.saveInBackground();}
+                                                                            }
+                                                                        });
                                                                         Intent intent = new Intent(EventPage.this, EventView.class);
                                                                         startActivity(intent);
                                                                         finish();
-                                                                    }
-                                                                    else
-                                                                    {
+                                                                    } else {
                                                                         Toast.makeText(getApplicationContext(), "Event not Posted.Please Re-enter the details and post", Toast.LENGTH_SHORT).show();
                                                                     }
                                                                 }
@@ -156,59 +184,144 @@ public class EventPage extends ActionBarActivity {
 
                                     );
                                 } else {
+                                    Toast.makeText(getApplicationContext(), "Kuch to problem 2"+e.toString(), Toast.LENGTH_SHORT).show();
                                     // something went wrong
                                 }
                             }
                         });
                     }
                     else{
-
-
+                        parseput();
                     }
 
                 }catch (NullPointerException e){
-                    ParseObject post = new ParseObject("Events");
-                    post.put("name", String.valueOf(title.getText()));
-                    post.put("eventdate", String.valueOf(fromdate.getText()));
-                    post.put("eventtime", String.valueOf(fromtime.getText()));
-                    post.put("enddate", String.valueOf(todate.getText()));
-                    post.put("endtime", String.valueOf(totime.getText()));
-                    post.put("description", String.valueOf(description.getText()));
-                    post.put("createdby", String.valueOf(ParseUser.getCurrentUser().getUsername()));
-                    post.saveInBackground(new SaveCallback() {
-                                              @Override
-                                              public void done(ParseException e) {
-                                                  if (e == null) {
-                                                      Intent intent = new Intent(EventPage.this, EventView.class);
-                                                      startActivity(intent);
-                                                      finish();
-                                                  } else {
-                                                      Toast.makeText(getApplicationContext(), "Event not Posted.Please Re-enter the details and post", Toast.LENGTH_SHORT).show();
-                                                  }
-                                              }
-                                          }
-
-                    );
+                    parseput();
                 }
 
         }
     });
     }
 
-    private void membercheck() {
-        try {
-            Bundle b=this.getIntent().getExtras();
-            s=b.getStringArrayList("user");
-            String names="";
-            for (int i=0;i<s.size();i++){
-                names=names+s.get(i)+", ";
-            }
-            Toast.makeText(this,"aya wapis",Toast.LENGTH_LONG).show();
-            addmembers.setText(names);
-        }catch (NullPointerException e){
+    public void addslider() {
 
-        }
+        ListView lv = (ListView) findViewById(R.id.list);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(EventPage.this, "onItemClick", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        getUserList();
+
+        mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mLayout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                Log.i(TAG, "onPanelSlide, offset " + slideOffset);
+            }
+
+            @Override
+            public void onPanelExpanded(View panel) {
+                Log.i(TAG, "onPanelExpanded");
+
+            }
+
+            @Override
+            public void onPanelCollapsed(View panel) {
+                Log.i(TAG, "onPanelCollapsed");
+
+            }
+
+            @Override
+            public void onPanelAnchored(View panel) {
+                Log.i(TAG, "onPanelAnchored");
+            }
+
+            @Override
+            public void onPanelHidden(View panel) {
+                Log.i(TAG, "onPanelHidden");
+            }
+        });
+
+        t = (TextView) findViewById(R.id.name1);
+        t.setText("Select Members");
     }
+
+    private void getUserList() {
+        li = (ListView) findViewById(R.id.list);
+        finaluser= new ArrayList<String>();
+        ParseUser.getQuery().whereNotEqualTo("username", "").findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> parseUsers, ParseException e) {
+                if (parseUsers != null) {
+                    if (parseUsers.size() == 0)
+                        Toast.makeText(EventPage.this, "No User Found", Toast.LENGTH_LONG).show();
+                    ulist = new ArrayList<>(parseUsers);
+                    li.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+                    adapter = new UserAdapter();
+                    li.setAdapter(adapter);
+                    li.setMultiChoiceModeListener(new ModeCallback());
+
+                } else {
+                    Toast.makeText(EventPage.this, "Errorrrr", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void parseput() {
+        ParseObject post = new ParseObject("Events");
+        post.put("name", String.valueOf(title.getText()));
+        post.put("eventdate", String.valueOf(fromdate.getText()));
+        post.put("eventtime", String.valueOf(fromtime.getText()));
+        post.put("enddate", String.valueOf(todate.getText()));
+        post.put("endtime", String.valueOf(totime.getText()));
+        post.put("description", String.valueOf(description.getText()));
+        post.put("createdby", String.valueOf(ParseUser.getCurrentUser().getUsername()));
+        post.put("place",String.valueOf(location.getText()));
+        pushkar();
+        post.saveInBackground(new SaveCallback() {
+                                  @Override
+                                  public void done(ParseException e) {
+                                      if (e == null) {
+                                          ParseQuery<ParseObject> q = ParseQuery.getQuery("Events");
+                                          q.whereEqualTo("name", String.valueOf(title.getText())).getFirstInBackground(new GetCallback<ParseObject>() {
+                                              @Override
+                                              public void done(ParseObject parseObject, ParseException e) {
+                                                  for(ParseUser user : users){
+                                                      ParseObject o=new ParseObject("eventmember");
+                                                      o.put("e_name",parseObject.getObjectId());
+                                                      o.put("event_members",user.getObjectId());
+                                                      o.saveInBackground();}
+                                              }
+                                          });
+                                          Intent intent = new Intent(EventPage.this, EventView.class);
+                                          startActivity(intent);
+                                          finish();
+                                      } else {
+                                          Toast.makeText(getApplicationContext(), "Event not Posted.Please Re-enter the details and post", Toast.LENGTH_SHORT).show();
+                                      }
+                                  }
+                              }
+
+        );
+    }
+
+    private void pushkar() {
+        try {
+            ParseQuery q = ParseInstallation.getQuery();
+            q.whereContainedIn("user",users);
+            ParsePush push=new ParsePush();
+            push.setQuery(q);
+            push.setMessage("You are been invited to "+title.getText().toString()+" event");
+            push.sendInBackground();
+        }catch (NullPointerException e){
+            Toast.makeText(getApplicationContext(), "Error while pushing", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
 
     private void check_edit() {
         try {
@@ -225,6 +338,7 @@ public class EventPage extends ActionBarActivity {
                             todate.setText(object.getString("enddate"));
                             totime.setText(object.getString("endtime"));
                             submit.setText("Update Event");
+                            location.setText(object.getString("place"));
 
                         } else {
                             // something went wrong
@@ -256,7 +370,7 @@ public class EventPage extends ActionBarActivity {
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 setHour=hourOfDay;
                 setMin=minute;
-                fromtime.setText(setHour+":"+setMin);
+                fromtime.setText(String.format("%02d", setHour)+" : "+String.format("%02d", setMin));
             }
         };
         final DatePickerDialog.OnDateSetListener dlistener1= new DatePickerDialog.OnDateSetListener() {
@@ -265,7 +379,7 @@ public class EventPage extends ActionBarActivity {
                 year_x=i;
                 month_x=i2+1;
                 day_x=i3;
-                todate.setText(year_x+"/"+month_x+"/"+day_x);
+                todate.setText(year_x+"-"+month_x+"-"+day_x);
             }
         };
 
@@ -275,7 +389,7 @@ public class EventPage extends ActionBarActivity {
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 setHour=hourOfDay;
                 setMin=minute;
-                totime.setText(setHour+":"+setMin);
+                totime.setText(String.format("%02d", setHour)+" : "+String.format("%02d", setMin));
             }
         };
 
@@ -296,7 +410,7 @@ public class EventPage extends ActionBarActivity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 new TimePickerDialog(EventPage.this, timelistnr, myCalendar
-                        .get(Calendar.HOUR), myCalendar.get(Calendar.MINUTE),
+                        .get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE),
                         true).show();
             }
         });
@@ -317,7 +431,7 @@ public class EventPage extends ActionBarActivity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 new TimePickerDialog(EventPage.this, timelistnr1, myCalendar
-                        .get(Calendar.HOUR), myCalendar.get(Calendar.MINUTE),
+                        .get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE),
                         true).show();
             }
         });
@@ -383,6 +497,11 @@ public class EventPage extends ActionBarActivity {
 
             @Override
             public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean b) {
 
             }
         });
@@ -529,6 +648,84 @@ public class EventPage extends ActionBarActivity {
             }
             return resultList;
         }
+
+    }
+
+    public class UserAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return ulist.size();
+        }
+
+        @Override
+        public ParseUser getItem(int i) {
+            return ulist.get(i);
+        }
+
+        public String getUsernameThis(int i){final ParseUser p=getItem(i);return p.getUsername();}
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            if (view == null) {
+                view = getLayoutInflater().inflate(R.layout.member_list, null);
+            }
+            final ParseUser c = getItem(i);
+
+            TextView label = (TextView) view.findViewById(R.id.label);
+            label.setText(c.getUsername());
+            return view;
+        }
+    }
+
+    public class ModeCallback implements ListView.MultiChoiceModeListener {
+
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.selected_item, menu);
+            mode.setTitle("Select Items");
+            return true;
+        }
+
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return true;
+        }
+
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            int id = item.getItemId();
+            if (id == R.id.print_item) {
+                SparseBooleanArray a=li.getCheckedItemPositions();
+                for (int i=0;i<li.getAdapter().getCount();i++){
+                    if (a.get(i)){
+                        users.add(ulist.get(i));
+                    }
+                }
+                mLayout.setPanelState(PanelState.COLLAPSED);
+            }
+            return true;
+        }
+
+        public void onDestroyActionMode(ActionMode mode) {
+        }
+
+        public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+            final int checkedCount = li.getCheckedItemCount();
+            switch (checkedCount) {
+                case 0:
+                    t.setText("Add Members");
+                    break;
+                case 1:
+                    t.setText("One item selected");
+                    break;
+                default:
+                    t.setText("" + checkedCount + " items selected");
+                    break;
+            }
+        }
+
 
     }
 }

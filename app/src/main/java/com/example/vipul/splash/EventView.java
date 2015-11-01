@@ -51,6 +51,7 @@ public class EventView extends ActionBarActivity {
     ArrayAdapter adapter;
     List<String> ojbects;
     ListView listView;
+    List<ParseObject> eventtoshow;
 
 
     @InjectView(R.id.drawer_layout)
@@ -149,6 +150,11 @@ public class EventView extends ActionBarActivity {
 
             @Override
             public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean b) {
 
             }
         });

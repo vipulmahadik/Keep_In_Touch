@@ -91,6 +91,7 @@ public class friend_list extends ActionBarActivity {
         rows.add("Create Event");
         rows.add("View Events");
         rows.add("Map Me");
+        rows.add("Invites");
 
         DrawerAdapter drawerAdapter = new DrawerAdapter(rows);
         drawerRecyclerView.setAdapter(drawerAdapter);
@@ -128,6 +129,9 @@ public class friend_list extends ActionBarActivity {
                         case 4:
                             startActivity(new Intent(friend_list.this,MapMe.class));
                             break;
+                        case 5:
+                            startActivity(new Intent(friend_list.this,invites.class));
+                            break;
                     }
 
                     return true;
@@ -139,6 +143,11 @@ public class friend_list extends ActionBarActivity {
 
             @Override
             public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean b) {
 
             }
         });
@@ -280,7 +289,6 @@ public class friend_list extends ActionBarActivity {
 // Send push notification to query
 
                     ParsePush push = new ParsePush();
-                    pushQuery.whereEqualTo("username", c.getUsername());
                     ParseGeoPoint g=(ParseGeoPoint)c.get("coords");
                     push.setQuery(pushQuery); // Set our Installation query
                     push.setMessage(g.getLatitude()+"  "+g.getLongitude());

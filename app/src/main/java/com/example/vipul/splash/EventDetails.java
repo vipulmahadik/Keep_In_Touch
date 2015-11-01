@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,8 @@ public class EventDetails extends ActionBarActivity {
     ActionBarDrawerToggle mDrawerToggle;
     MenuItem del;
     String objectid;
-    TextView name,description,createdby,from,to;
+    Button direction;
+    TextView name,description,createdby,from,to,venue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +60,25 @@ public class EventDetails extends ActionBarActivity {
         createdby=(TextView)findViewById(R.id.createdby);
         from=(TextView)findViewById(R.id.fromvariable);
         to=(TextView)findViewById(R.id.tovariable);
-
-        ActionNew();
-
+        direction=(Button)findViewById(R.id.direction);
+        venue=(TextView)findViewById(R.id.venue);
 
         objectid=getIntent().getExtras().getString("objectId");
 
-        Log.d(getClass().getSimpleName(), "Ojectid: " + objectid);
+        direction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(EventDetails.this,GetDirections.class);
+                i.putExtra("objectId",objectid);
+                i.putExtra("place",venue.getText());
+                startActivity(i);
+                finish();
+            }
+        });
+
+        ActionNew();
+
+        Log.d(getClass().getSimpleName(), "Objectid: " + objectid);
 
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Events");
@@ -76,6 +90,7 @@ public class EventDetails extends ActionBarActivity {
                     createdby.setText(object.getString("createdby"));
                     from.setText(object.getString("eventdate")+ " "+ object.getString("eventtime"));
                     to.setText(object.getString("enddate")+ " "+ object.getString("endtime"));
+                    venue.setText(object.getString("place"));
                     Log.d(getClass().getSimpleName(), "event: " + event);
                 } else {
                     // something went wrong
@@ -144,6 +159,11 @@ public class EventDetails extends ActionBarActivity {
 
             @Override
             public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean b) {
 
             }
         });
