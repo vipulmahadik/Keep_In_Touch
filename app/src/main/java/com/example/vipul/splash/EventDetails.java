@@ -2,6 +2,7 @@ package com.example.vipul.splash;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -16,9 +17,18 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookActivity;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.share.model.ShareLinkContent;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -33,6 +43,7 @@ import butterknife.InjectView;
 
 public class EventDetails extends ActionBarActivity {
     TextView ed;
+    private CallbackManager callbackManager;
     String event="";
     @InjectView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
@@ -43,6 +54,7 @@ public class EventDetails extends ActionBarActivity {
     DrawerLayout Drawer;                                  // Declaring DrawerLayout
     ActionBarDrawerToggle mDrawerToggle;
     MenuItem del;
+    ImageView fbshare;
     String objectid;
     Button direction;
     TextView name,description,createdby,from,to,venue;
@@ -55,6 +67,7 @@ public class EventDetails extends ActionBarActivity {
         ButterKnife.inject(this);
 
         setSupportActionBar(toolbar);
+        fbshare=(ImageView)findViewById(R.id.fbshare);
         name=(TextView)findViewById(R.id.eventname);
         description=(TextView)findViewById(R.id.description);
         createdby=(TextView)findViewById(R.id.createdby);
@@ -65,6 +78,32 @@ public class EventDetails extends ActionBarActivity {
 
         objectid=getIntent().getExtras().getString("objectId");
 
+
+
+        fbshare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FacebookSdk.sdkInitialize(getApplicationContext());
+                callbackManager = CallbackManager.Factory.create();
+                LoginManager.getInstance().registerCallback(callbackManager,
+                        new FacebookCallback<LoginResult>() {
+                            @Override
+                            public void onSuccess(LoginResult loginResult) {
+                                // App code
+                            }
+
+                            @Override
+                            public void onCancel() {
+                                // App code
+                            }
+
+                            @Override
+                            public void onError(FacebookException exception) {
+                                // App code
+                            }
+                        });
+            }
+        });
         direction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,7 +150,9 @@ public class EventDetails extends ActionBarActivity {
         rows.add("View Events");
         rows.add("Map Me");
 
-        DrawerAdapter drawerAdapter = new DrawerAdapter(rows);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+        int icons[]=new int[6];
+        DrawerAdapter drawerAdapter = new DrawerAdapter(rows,icons,font);
         drawerRecyclerView.setAdapter(drawerAdapter);
         drawerRecyclerView.setHasFixedSize(true);
         drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));

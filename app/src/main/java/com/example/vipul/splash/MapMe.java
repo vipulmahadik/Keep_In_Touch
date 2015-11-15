@@ -2,6 +2,7 @@ package com.example.vipul.splash;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -84,7 +85,9 @@ public class MapMe extends ActionBarActivity {
         rows.add("View Events");
         rows.add("Map Me");
 
-        DrawerAdapter drawerAdapter = new DrawerAdapter(rows);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+        int icons[]=new int[6];
+        DrawerAdapter drawerAdapter = new DrawerAdapter(rows,icons,font);
         drawerRecyclerView.setAdapter(drawerAdapter);
         drawerRecyclerView.setHasFixedSize(true);
         drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -192,11 +195,6 @@ public class MapMe extends ActionBarActivity {
 
             // Get the name of the best provider
             String provider = locationManager.getBestProvider(criteria, true);
-            Location locListener = locationManager.getLastKnownLocation(provider);
-            marker = new MarkerOptions().position(new LatLng(locListener.getLatitude(), locListener.getLongitude())).title("Hello Maps ");
-            googleMap.addMarker(marker);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(locListener.getLatitude(), locListener.getLongitude()), 5));
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
             LocationListener listener= new LocationListener() {
                 @Override
                 public void onLocationChanged(Location l) {
@@ -232,7 +230,7 @@ public class MapMe extends ActionBarActivity {
                 }
             };
             if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,10,listener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,listener);
             }
             else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,10000,10,listener);

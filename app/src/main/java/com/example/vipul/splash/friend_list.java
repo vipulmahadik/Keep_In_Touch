@@ -1,9 +1,11 @@
 package com.example.vipul.splash;
 
+import android.app.ActionBar;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -78,6 +80,7 @@ public class friend_list extends ActionBarActivity {
 
         setSupportActionBar(toolbar);
 
+
         ActionNew();
     }
 
@@ -85,15 +88,21 @@ public class friend_list extends ActionBarActivity {
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
         drawerLayout.setDrawerListener(drawerToggle);
         drawerToggle.syncState();
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+
+
+        int icons[]=new int[7];
+        icons[0]=R.string.friends;
+        icons[1]=R.string.icon_heart;
+        icons[2]=R.string.icon_heart;
+        icons[3]=R.string.map;
+        icons[4]=R.string.invi;
+        icons[5]=R.string.faceb;
+        icons[6]=R.string.icon_heart;
 
         List<String> rows = new ArrayList<>();
-        rows.add("Find Friends");
-        rows.add("Create Event");
-        rows.add("View Events");
-        rows.add("Map Me");
-        rows.add("Invites");
 
-        DrawerAdapter drawerAdapter = new DrawerAdapter(rows);
+        DrawerAdapter drawerAdapter = new DrawerAdapter(rows,icons,font);
         drawerRecyclerView.setAdapter(drawerAdapter);
         drawerRecyclerView.setHasFixedSize(true);
         drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -121,16 +130,22 @@ public class friend_list extends ActionBarActivity {
                         case 1:
                             break;
                         case 2:
-                            startActivity(new Intent(friend_list.this,EventPage.class));
+                            startActivity(new Intent(friend_list.this,Events.class));
                             break;
                         case 3:
-                            startActivity(new Intent(friend_list.this,EventView.class));
-                            break;
-                        case 4:
                             startActivity(new Intent(friend_list.this,MapMe.class));
                             break;
-                        case 5:
+                        case 4:
                             startActivity(new Intent(friend_list.this,invites.class));
+                            break;
+                        case 5:
+                            startActivity(new Intent(friend_list.this,facebook.class));
+                            break;
+                        case 6:
+                            startActivity(new Intent(friend_list.this,group.class));
+                            break;
+                        case 7:
+                            startActivity(new Intent(friend_list.this,EmergencyContact.class));
                             break;
                     }
 

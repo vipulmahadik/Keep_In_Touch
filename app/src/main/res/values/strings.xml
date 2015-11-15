@@ -31,4 +31,19 @@
     <string name="follow"><![CDATA[Follow us<br/>on <a href="http://twitter.com/umanoapp">Twitter</a>]]></string>
     <string name="title_activity_invites">Invites</string>
     <string name="title_activity_get_directions">GetDirections</string>
+    <string name="title_activity_facebook">facebook</string>
+    <string name="facebook_app_id">195866390745121</string>
+    <string name="title_activity_group">group</string>
+    <string name="title_activity_events">Events</string>
+    <string name="icon_heart">&#xf004;</string>
+    <string name="friends">&#xf0c0;</string>
+    <string name="map">&#xf279;</string>
+    <string name="invi">&#xf087;</string>
+    <string name="faceb">&#xf082;</string>
+    <string name="location_icon">&#xf041;</string>
+    <string name="redir">&#xf124;</string>
+    <string name="emer">&#xf0a1;</string>
+    <string name="title_activity_live_loc">Live_loc</string>
+    <string name="title_activity_emergency_contact">EmergencyContact</string>
+
 </resources>

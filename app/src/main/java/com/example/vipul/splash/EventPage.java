@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -55,6 +56,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -130,6 +132,10 @@ public class EventPage extends ActionBarActivity {
         location=(AutoCompleteTextView) findViewById(R.id.location);
         location.setAdapter(new PlacesAutoCompleteAdapter(this, android.R.layout.simple_dropdown_item_1line));
         users=new ArrayList<>();
+        TextView location_icon=(TextView) findViewById(R.id.location_icon);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+        location_icon.setText(R.string.location_icon);
+        location_icon.setTypeface(font);
 
 
 
@@ -245,7 +251,9 @@ public class EventPage extends ActionBarActivity {
         });
 
         t = (TextView) findViewById(R.id.name1);
-        t.setText("Select Members");
+        t.setText(R.string.friends);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+        t.setTypeface(font);
     }
 
     private void getUserList() {
@@ -321,7 +329,6 @@ public class EventPage extends ActionBarActivity {
         }
 
     }
-
 
     private void check_edit() {
         try {
@@ -435,8 +442,6 @@ public class EventPage extends ActionBarActivity {
                         true).show();
             }
         });
-
-
     }
 
     private void ActionNew() {
@@ -450,7 +455,9 @@ public class EventPage extends ActionBarActivity {
         rows.add("View Events");
         rows.add("Map Me");
 
-        DrawerAdapter drawerAdapter = new DrawerAdapter(rows);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+        int icons[]=new int[6];
+        DrawerAdapter drawerAdapter = new DrawerAdapter(rows,icons,font);
         drawerRecyclerView.setAdapter(drawerAdapter);
         drawerRecyclerView.setHasFixedSize(true);
         drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -703,6 +710,7 @@ public class EventPage extends ActionBarActivity {
                         users.add(ulist.get(i));
                     }
                 }
+                mode.finish();
                 mLayout.setPanelState(PanelState.COLLAPSED);
             }
             return true;

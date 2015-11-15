@@ -1,6 +1,5 @@
 package com.example.vipul.splash;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v4.widget.DrawerLayout;
@@ -16,45 +15,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseInstallation;
 import com.parse.ParseObject;
-import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 
-public class EventView extends ActionBarActivity {
+public class Live_loc extends ActionBarActivity {
 
-
-
-    Context context;
-    List<String> tasks;
-    ArrayAdapter adapter;
-    List<String> ojbects;
-    ListView listView;
-    List<ParseObject> eventtoshow;
-
-
+    GoogleMap map;
     @InjectView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @InjectView(R.id.toolbar)
@@ -63,31 +47,60 @@ public class EventView extends ActionBarActivity {
     RecyclerView drawerRecyclerView;
     DrawerLayout Drawer;                                  // Declaring DrawerLayout
     ActionBarDrawerToggle mDrawerToggle;
-    List<ParseObject> ulist;
+    ArrayList<String> s1;
+    ArrayList<ParseObject> grpmem,locmem;
+    ArrayList<ParseUser> ulist;
+    String objid;
+    Collection<String> memincoll;
+    ArrayList<LatLng> markerPoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_view);
-
+        setContentView(R.layout.activity_live_loc);
         ButterKnife.inject(this);
-
         setSupportActionBar(toolbar);
-
         ActionNew();
-        context = this;
+        SupportMapFragment fm = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map_live);
+        map=fm.getMap();
 
-//        listView = (ListView) findViewById(R.id.eventlist);
+        objid=getIntent().getExtras().getString("objid");
+        Log.d("Object id from past: ",objid);
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Events");
-        query.findInBackground(new FindCallback<ParseObject>() {
+        ParseQuery<ParseObject> mem=ParseQuery.getQuery("eventmember");
+        mem.whereEqualTo("e_name",objid).findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                ulist=new ArrayList<ParseObject>(parseObjects);
-                ListView li=(ListView)findViewById(R.id.eventlist);
-                li.setAdapter(new UserAdapter());
+            public void done(final List<ParseObject> parseObjects, ParseException e) {
+                grpmem=new ArrayList<ParseObject>(parseObjects);
+                s1=new ArrayList<String>();
+                for (int x=0;x<grpmem.size();x++){
+                    Log.d("Count : ", grpmem.get(x).getString("event_members"));
+                    s1.add(grpmem.get(x).getString("event_members"));
+                }
+                Collection<String> c=new ArrayList(s1);
+                ParseUser.getQuery().whereContainedIn("objectId",c).findInBackground(new FindCallback<ParseUser>() {
+                    @Override
+                    public void done(List<ParseUser> parseUsers, ParseException e) {
+                        ulist = new ArrayList<ParseUser>(parseUsers);
+                        for (ParseUser u : ulist){
+                            Log.d("User : ",u.getObjectId()+" "+u.getUsername());
+                            ParseGeoPoint g=(ParseGeoPoint)u.get("coords");
+                            MarkerOptions markerd=new MarkerOptions().position(new LatLng(g.getLatitude(),g.getLongitude())).title(u.getUsername());
+                            map.addMarker(markerd);
+                        }
+                    }
+                });
             }
         });
+
+        if(map!=null){
+            markerPoints = new ArrayList<LatLng>();
+            map.setMyLocationEnabled(true);
+
+        }
+
+
+
 
 
 
@@ -112,7 +125,7 @@ public class EventView extends ActionBarActivity {
         drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         RecyclerView.LayoutManager mLayoutManager;
 
-        final GestureDetector mGestureDetector = new GestureDetector(EventView.this, new GestureDetector.SimpleOnGestureListener() {
+        final GestureDetector mGestureDetector = new GestureDetector(Live_loc.this, new GestureDetector.SimpleOnGestureListener() {
 
             @Override public boolean onSingleTapUp(MotionEvent e) {
                 return true;
@@ -129,18 +142,19 @@ public class EventView extends ActionBarActivity {
 
                 if(child!=null && mGestureDetector.onTouchEvent(motionEvent)){
                     Drawer.closeDrawers();
-                    Toast.makeText(EventView.this, "The Item Clicked is: " + recyclerView.getChildPosition(child), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Live_loc.this, "The Item Clicked is: " + recyclerView.getChildPosition(child), Toast.LENGTH_SHORT).show();
                     switch (recyclerView.getChildPosition(child)){
                         case 1:
-                            startActivity(new Intent(EventView.this,friend_list.class));
+                            startActivity(new Intent(Live_loc.this,friend_list.class));
                             break;
                         case 2:
-                            startActivity(new Intent(EventView.this,EventPage.class));
+                            startActivity(new Intent(Live_loc.this,EventPage.class));
                             break;
                         case 3:
+                            startActivity(new Intent(Live_loc.this,EventView.class));
                             break;
                         case 4:
-                            startActivity(new Intent(EventView.this,MapMe.class));
+                            startActivity(new Intent(Live_loc.this,MapMe.class));
                             break;
                     }
 
@@ -192,10 +206,11 @@ public class EventView extends ActionBarActivity {
     }
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_event_view, menu);
+        getMenuInflater().inflate(R.menu.menu_live_loc, menu);
         return true;
     }
 
@@ -212,50 +227,5 @@ public class EventView extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private class UserAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-            return ulist.size();
-        }
-
-        @Override
-        public ParseObject getItem(int i) {
-            return ulist.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            if (view==null){
-                view=getLayoutInflater().inflate(R.layout.event_row, null);
-            }
-            final ParseObject c= getItem(i);
-
-            TextView label= (TextView)view.findViewById(R.id.eventname);
-            TextView from= (TextView)view.findViewById(R.id.from);
-            TextView to= (TextView)view.findViewById(R.id.to);
-            TextView createdby= (TextView)view.findViewById(R.id.by);
-            from.setText(c.getString("eventdate"));
-            to.setText(c.getString("enddate"));
-            createdby.setText("created by: "+c.getString("createdby"));
-            label.setText(c.getString("name"));
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent i=new Intent(EventView.this,EventDetails.class);
-                    i.putExtra("objectId",c.getObjectId());
-                    startActivity(i);
-                    finish();
-                }
-            });
-            return view;
-        }
     }
 }

@@ -73,19 +73,21 @@
                         android:layout_height="match_parent"
                         android:id="@+id/scrollView2"
                         android:padding="16dp"
-                        android:layout_marginBottom="64dp">
+                        android:layout_marginBottom="70dp"
+                        android:background="@drawable/card">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:weightSum="1"
+                            android:padding="10dp"
                             android:id="@+id/linear">
 
                             <EditText
                                 android:layout_width="match_parent"
                                 android:layout_height="80dp"
                                 android:layout_marginTop="10dp"
-                                android:text="Event Name"
+                                android:hint="Event Name"
                                 android:textSize="50sp"
                                 android:id="@+id/ename" />
 
@@ -96,7 +98,7 @@
                                 android:ems="10"
                                 android:id="@+id/description"
                                 android:layout_weight="1.18"
-                                android:text="Description"
+                                android:hint="Description"
                                 android:layout_marginTop="20dp" />
 
                             <RelativeLayout
@@ -113,13 +115,13 @@
                                     android:layout_alignParentTop="true"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentEnd="true"
-                                    android:text="time" />
+                                    android:text="Start Time" />
 
                                 <TextView
                                     android:layout_width="182dp"
                                     android:layout_height="wrap_content"
                                     android:id="@+id/date_text"
-                                    android:text="date"
+                                    android:text="Start Date"
                                     android:layout_alignParentTop="true"
                                     android:layout_alignParentLeft="true"
                                     android:layout_alignParentStart="true" />
@@ -138,30 +140,45 @@
                                     android:layout_alignParentTop="true"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentEnd="true"
-                                    android:text="time" />
+                                    android:text="End Time" />
 
                                 <TextView
                                     android:layout_width="182dp"
                                     android:layout_height="wrap_content"
                                     android:id="@+id/date_text_to"
-                                    android:text="date"
+                                    android:text="End Date"
                                     android:layout_alignParentTop="true"
                                     android:layout_alignParentLeft="true"
                                     android:layout_alignParentStart="true" />
 
                             </RelativeLayout>
-                            <TextView
+
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="30dp"
-                                android:text="Meet up Place"
-                                android:id="@+id/location_label"/>
+                                android:layout_marginTop="20dp"
+                                android:orientation="horizontal">
 
-                            <AutoCompleteTextView
-                                android:id="@+id/location"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:completionThreshold="3"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?android:attr/textAppearanceLarge"
+                                    android:textSize="24sp"
+                                    android:paddingTop="5dp"
+                                    android:paddingLeft="5dp"
+                                    android:paddingRight="10dp"
+                                    android:id="@+id/location_icon"
+                                    android:text="Abc" />
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/location"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:completionThreshold="3"
+                                    android:layout_marginLeft="10dp"
+                                    android:hint="Meet Up Place"/>
+
+                                </LinearLayout>
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -171,7 +188,6 @@
                                 android:layout_marginBottom="30dp"
                                 android:id="@+id/addmember"
                                 android:text="Members"/>
-
 
                             <Button
                                 android:layout_width="match_parent"
@@ -211,21 +227,35 @@
         android:focusable="false"
         android:id="@+id/dragView">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="68dp"
-                android:orientation="horizontal">
+                android:layout_height="68dp">
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Medium Text"
                     android:id="@+id/name1"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:textSize="14sp"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="10dp"/>
+                    android:paddingLeft="24dp"
+                    android:textSize="24sp"
+                    android:paddingRight="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
 
-            </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Create Group"
+                    android:paddingBottom="2dp"
+                    android:id="@+id/textView9"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/name1"
+                    android:layout_toEndOf="@+id/name1" />
+
+            </RelativeLayout>
 
             <ListView
                 android:id="@+id/list"

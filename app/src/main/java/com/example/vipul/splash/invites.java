@@ -4,13 +4,21 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -33,6 +41,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 import static android.provider.CalendarContract.ACTION_EVENT_REMINDER;
 import static android.provider.CalendarContract.Events;
 import static android.provider.CalendarContract.Events.*;
@@ -41,13 +52,128 @@ import static android.provider.CalendarContract.Events.*;
 public class invites extends ActionBarActivity {
 
     List<ParseObject> ilist,elist;
+    @InjectView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
+    @InjectView(R.id.drawer_recyclerView)
+    RecyclerView drawerRecyclerView;
+    DrawerLayout Drawer;                                  // Declaring DrawerLayout
+    ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invites);
+        ButterKnife.inject(this);
+
+        setSupportActionBar(toolbar);
+
+        ActionNew();
 
         loadlist();
+    }
+
+    private void ActionNew() {
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+
+        List<String> rows = new ArrayList<>();
+        rows.add("Find Friends");
+        rows.add("Create Event");
+        rows.add("View Events");
+        rows.add("Map Me");
+        rows.add("Invites");
+
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+        int icons[]=new int[6];
+        DrawerAdapter drawerAdapter = new DrawerAdapter(rows,icons,font);
+        drawerRecyclerView.setAdapter(drawerAdapter);
+        drawerRecyclerView.setHasFixedSize(true);
+        drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView.LayoutManager mLayoutManager;
+
+        final GestureDetector mGestureDetector = new GestureDetector(invites.this, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+        });
+
+        drawerRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+                View child = recyclerView.findChildViewUnder(motionEvent.getX(),motionEvent.getY());
+
+
+
+                if(child!=null && mGestureDetector.onTouchEvent(motionEvent)){
+                    Drawer.closeDrawers();
+                    Toast.makeText(invites.this, "The Item Clicked is: " + recyclerView.getChildPosition(child), Toast.LENGTH_SHORT).show();
+                    switch (recyclerView.getChildPosition(child)){
+                        case 1:
+                            startActivity(new Intent(invites.this,friend_list.class));
+                            break;
+                        case 2:
+                            startActivity(new Intent(invites.this,EventPage.class));
+                            break;
+                        case 3:
+                            startActivity(new Intent(invites.this,EventView.class));
+                            break;
+                        case 4:
+                            startActivity(new Intent(invites.this,MapMe.class));
+                            break;
+                        case 5:
+                            break;
+                    }
+
+                    return true;
+
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean b) {
+
+            }
+        });
+
+        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
+
+        drawerRecyclerView.setLayoutManager(mLayoutManager);                 // Setting the layout Manager
+
+
+        Drawer = (DrawerLayout) findViewById(R.id.drawer_layout);        // Drawer object Assigned to the view
+        mDrawerToggle = new ActionBarDrawerToggle(this,Drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close){
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
+                // open I am not going to put anything here)
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                // Code here will execute once drawer is closed
+            }
+
+
+
+        }; // Drawer Toggle Object Made
+        Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
+        mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
+
     }
 
     private void loadlist() {
@@ -134,8 +260,8 @@ public class invites extends ActionBarActivity {
                 view=getLayoutInflater().inflate(R.layout.invite_row_new, null);
             }
             final ParseObject c= getItem(i);
-            Button accept=(Button)view.findViewById(R.id.accept);
-            Button decline=(Button)view.findViewById(R.id.decline);
+            final Button accept=(Button)view.findViewById(R.id.accept);
+            final Button decline=(Button)view.findViewById(R.id.decline);
             final Button addtocal=(Button)view.findViewById(R.id.addtocal);
             String[] projection = new String[] { "_id", "name" };
             final Uri calendars = Uri.parse("content://calendar/calendars");
@@ -156,7 +282,7 @@ public class invites extends ActionBarActivity {
                     } catch (java.text.ParseException e) {
                         e.printStackTrace();
                     }
-                    
+
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(startdate);
                     Intent intent = new Intent(Intent.ACTION_EDIT);
@@ -176,12 +302,20 @@ public class invites extends ActionBarActivity {
                 if (i2.get("e_name").toString().equals(c.getObjectId())){
                     if (i2.get("status")==true){
                         status.setText("Accepted");
+                        accept.setEnabled(false);
                     }
                     else if (i2.get("status")==false){
                         status.setText("Declined");
+                        addtocal.setEnabled(false);
+                        decline.setEnabled(false);
                     }
-                    else
+                    else{
                         status.setText("Not defined");
+                        addtocal.setEnabled(false);
+                        accept.setEnabled(true);
+                        decline.setEnabled(true);
+                    }
+
                 }
             }
 
@@ -194,6 +328,9 @@ public class invites extends ActionBarActivity {
                             status.setText("Accepted");
                             i.saveEventually();
                         }
+                        addtocal.setEnabled(true);
+                        accept.setEnabled(false);
+                        decline.setEnabled(true);
                     }
                 }
             });
@@ -206,6 +343,9 @@ public class invites extends ActionBarActivity {
                             status.setText("Declined");
                             i.saveEventually();
                         }
+                        addtocal.setEnabled(false);
+                        accept.setEnabled(true);
+                        decline.setEnabled(false);
                     }
                 }
             });

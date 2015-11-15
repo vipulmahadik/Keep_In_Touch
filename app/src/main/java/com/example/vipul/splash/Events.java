@@ -1,6 +1,5 @@
 package com.example.vipul.splash;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v4.widget.DrawerLayout;
@@ -10,31 +9,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
-
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.Parse;
-import com.parse.ParseException;
-import com.parse.ParseGeoPoint;
-import com.parse.ParseInstallation;
-import com.parse.ParseObject;
-import com.parse.ParsePush;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,18 +24,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 
-public class EventView extends ActionBarActivity {
+public class Events extends ActionBarActivity {
 
-
-
-    Context context;
-    List<String> tasks;
-    ArrayAdapter adapter;
-    List<String> ojbects;
-    ListView listView;
-    List<ParseObject> eventtoshow;
-
-
+    Button cr,ve;
     @InjectView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @InjectView(R.id.toolbar)
@@ -63,56 +35,55 @@ public class EventView extends ActionBarActivity {
     RecyclerView drawerRecyclerView;
     DrawerLayout Drawer;                                  // Declaring DrawerLayout
     ActionBarDrawerToggle mDrawerToggle;
-    List<ParseObject> ulist;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_view);
-
+        setContentView(R.layout.activity_events);
         ButterKnife.inject(this);
-
         setSupportActionBar(toolbar);
-
         ActionNew();
-        context = this;
-
-//        listView = (ListView) findViewById(R.id.eventlist);
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Events");
-        query.findInBackground(new FindCallback<ParseObject>() {
+        
+        cr=(Button)findViewById(R.id.cr_event);
+        ve=(Button)findViewById(R.id.ve_events);
+        cr.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                ulist=new ArrayList<ParseObject>(parseObjects);
-                ListView li=(ListView)findViewById(R.id.eventlist);
-                li.setAdapter(new UserAdapter());
+            public void onClick(View view) {
+                startActivity(new Intent(Events.this,EventPage.class));
             }
         });
-
-
-
+        ve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Events.this,EventView.class));
+            }
+        });
     }
 
     private void ActionNew() {
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
         drawerLayout.setDrawerListener(drawerToggle);
         drawerToggle.syncState();
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+
+
+        int icons[]=new int[7];
+        icons[0]=R.string.friends;
+        icons[1]=R.string.icon_heart;
+        icons[2]=R.string.icon_heart;
+        icons[3]=R.string.map;
+        icons[4]=R.string.invi;
+        icons[5]=R.string.faceb;
+        icons[6]=R.string.icon_heart;
 
         List<String> rows = new ArrayList<>();
-        rows.add("Find Friends");
-        rows.add("Create Event");
-        rows.add("View Events");
-        rows.add("Map Me");
 
-        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
-        int icons[]=new int[6];
         DrawerAdapter drawerAdapter = new DrawerAdapter(rows,icons,font);
         drawerRecyclerView.setAdapter(drawerAdapter);
         drawerRecyclerView.setHasFixedSize(true);
         drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         RecyclerView.LayoutManager mLayoutManager;
 
-        final GestureDetector mGestureDetector = new GestureDetector(EventView.this, new GestureDetector.SimpleOnGestureListener() {
+        final GestureDetector mGestureDetector = new GestureDetector(Events.this, new GestureDetector.SimpleOnGestureListener() {
 
             @Override public boolean onSingleTapUp(MotionEvent e) {
                 return true;
@@ -129,18 +100,24 @@ public class EventView extends ActionBarActivity {
 
                 if(child!=null && mGestureDetector.onTouchEvent(motionEvent)){
                     Drawer.closeDrawers();
-                    Toast.makeText(EventView.this, "The Item Clicked is: " + recyclerView.getChildPosition(child), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Events.this, "The Item Clicked is: " + recyclerView.getChildPosition(child), Toast.LENGTH_SHORT).show();
                     switch (recyclerView.getChildPosition(child)){
                         case 1:
-                            startActivity(new Intent(EventView.this,friend_list.class));
+                            startActivity(new Intent(Events.this,friend_list.class));
                             break;
                         case 2:
-                            startActivity(new Intent(EventView.this,EventPage.class));
                             break;
                         case 3:
+                            startActivity(new Intent(Events.this,MapMe.class));
                             break;
                         case 4:
-                            startActivity(new Intent(EventView.this,MapMe.class));
+                            startActivity(new Intent(Events.this,invites.class));
+                            break;
+                        case 5:
+                            startActivity(new Intent(Events.this,facebook.class));
+                            break;
+                        case 6:
+                            startActivity(new Intent(Events.this,group.class));
                             break;
                     }
 
@@ -192,10 +169,11 @@ public class EventView extends ActionBarActivity {
     }
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_event_view, menu);
+        getMenuInflater().inflate(R.menu.menu_events, menu);
         return true;
     }
 
@@ -212,50 +190,5 @@ public class EventView extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private class UserAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-            return ulist.size();
-        }
-
-        @Override
-        public ParseObject getItem(int i) {
-            return ulist.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            if (view==null){
-                view=getLayoutInflater().inflate(R.layout.event_row, null);
-            }
-            final ParseObject c= getItem(i);
-
-            TextView label= (TextView)view.findViewById(R.id.eventname);
-            TextView from= (TextView)view.findViewById(R.id.from);
-            TextView to= (TextView)view.findViewById(R.id.to);
-            TextView createdby= (TextView)view.findViewById(R.id.by);
-            from.setText(c.getString("eventdate"));
-            to.setText(c.getString("enddate"));
-            createdby.setText("created by: "+c.getString("createdby"));
-            label.setText(c.getString("name"));
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent i=new Intent(EventView.this,EventDetails.class);
-                    i.putExtra("objectId",c.getObjectId());
-                    startActivity(i);
-                    finish();
-                }
-            });
-            return view;
-        }
     }
 }
