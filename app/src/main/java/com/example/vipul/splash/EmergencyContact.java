@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,7 @@ public class EmergencyContact extends ActionBarActivity {
     TextView name_label,number_label,noset;
     public static final String MyPREFERENCES = "ContactDetails" ;
     SharedPreferences sharedpreferences;
+    ToggleButton toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,20 @@ public class EmergencyContact extends ActionBarActivity {
         ActionNew();
 
 
+        toggle=(ToggleButton)findViewById(R.id.toggleButton);
+        toggle.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                //toggle.toggle();
+                if (toggle.isChecked()){
+                    startService(new Intent(getApplication(), ChatHeadService.class));
+                }else {
+                    stopService(new Intent(getApplication(), ChatHeadService.class));
+                }
+            }
+        });
         name_label=(TextView)findViewById(R.id.contactname);
         number_label=(TextView)findViewById(R.id.contactnumber);
         pic=(ImageView)findViewById(R.id.pic);

@@ -79,6 +79,22 @@
                     android:layout_centerHorizontal="true" />
             </RelativeLayout>
 
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New ToggleButton"
+                android:id="@+id/toggleButton"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="60dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Toggle Rescue Widget"
+                android:id="@+id/toogle"
+                android:layout_gravity="center_horizontal" />
+
         </LinearLayout>
 
     </LinearLayout>
