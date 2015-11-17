@@ -110,6 +110,7 @@ public class EventDetails extends ActionBarActivity {
                 Intent i=new Intent(EventDetails.this,GetDirections.class);
                 i.putExtra("objectId",objectid);
                 i.putExtra("place",venue.getText());
+                i.putExtra("ename",name.getText());
                 startActivity(i);
                 finish();
             }

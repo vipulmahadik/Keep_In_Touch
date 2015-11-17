@@ -21,6 +21,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -82,7 +83,6 @@ public class EmergencyContact extends ActionBarActivity {
         name_label=(TextView)findViewById(R.id.contactname);
         number_label=(TextView)findViewById(R.id.contactnumber);
         pic=(ImageView)findViewById(R.id.pic);
-        noset=(TextView)findViewById(R.id.noset);
         contactpick=(Button)findViewById(R.id.contactpick);
         contactpick.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,8 +93,9 @@ public class EmergencyContact extends ActionBarActivity {
         });
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         try{
-            contactpick.setText(sharedpreferences.getString(MyPREFERENCES, "number"));
-            pic.setImageURI(Uri.parse(sharedpreferences.getString(MyPREFERENCES,"pic")));
+            name_label.setText(sharedpreferences.getString("name", "No Emergency Contact"));
+            number_label.setText(sharedpreferences.getString("number", ""));
+            pic.setImageURI(Uri.parse(sharedpreferences.getString("pic", "no pic value")));
         }catch(NullPointerException e){
 
         }
@@ -119,18 +120,21 @@ public class EmergencyContact extends ActionBarActivity {
                                             + " = " + contactId, null, null);
                     while (phones.moveToNext()) {
                         try{
-                            noset.setText("");
-                            name_label.setText(phones.getString(phones.getColumnIndex
-                                    (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+                            String temp =phones.getString(phones.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                            Log.d("display name:", temp);
+                            name_label.setText(temp);
                             number_label.setText(phones.getString(phones.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll("[-() ]", ""));
-                            sharedpreferences.edit().putString("number",contactpick.getText()+"").apply();
+                            sharedpreferences.edit().putString("number",number_label.getText()+"").apply();
+                            sharedpreferences.edit().putString("name",name_label.getText()+"").apply();
                             sharedpreferences.edit().putString("pic",Uri.parse(phones.getString(phones.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI)))+"").apply();
                             pic.setImageURI(Uri.parse(phones.getString(phones.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI))));
                         }catch (NullPointerException e){
                             pic.setImageDrawable(getResources().getDrawable(R.drawable.male));
+                            sharedpreferences.edit().putString("pic",Uri.parse("android.resource://com.example.vipul.splash/drawable/male")+"").apply();
                         }
                     }
                     phones.close();
@@ -143,7 +147,7 @@ public class EmergencyContact extends ActionBarActivity {
         }
     }
 
-    private void sendSMS(String phoneNumber, String message)
+    public void sendSMS(String phoneNumber, String message)
     {
         String SENT = "SMS_SENT";
         String DELIVERED = "SMS_DELIVERED";

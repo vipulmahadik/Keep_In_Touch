@@ -188,6 +188,9 @@ public class MapMe extends ActionBarActivity {
 
 
             locationManager=(LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location location1 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            marker=new MarkerOptions().position(new LatLng(location1.getLatitude(),location1.getLongitude()));
+            googleMap.addMarker(marker);
             // Create a criteria object to retrieve provider
             Criteria criteria = new Criteria();
             criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -230,7 +233,7 @@ public class MapMe extends ActionBarActivity {
                 }
             };
             if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,listener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,10,listener);
             }
             else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,10000,10,listener);

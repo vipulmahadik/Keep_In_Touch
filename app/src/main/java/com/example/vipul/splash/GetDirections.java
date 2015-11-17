@@ -2,6 +2,7 @@ package com.example.vipul.splash;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Address;
@@ -21,11 +22,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -74,6 +77,9 @@ public class GetDirections extends ActionBarActivity {
     DrawerLayout Drawer;                                  // Declaring DrawerLayout
     ActionBarDrawerToggle mDrawerToggle;
     Button redirect,live_loc;
+    SharedPreferences sharedpreferences;
+    TextView src,dst,ename,destl1,destl2;
+
 
 
 
@@ -85,12 +91,23 @@ public class GetDirections extends ActionBarActivity {
         live_loc=(Button)findViewById(R.id.live_loc);
 
         setSupportActionBar(toolbar);
+        src=(TextView)findViewById(R.id.sourcem);
+        dst=(TextView)findViewById(R.id.destin);
+        ename=(TextView)findViewById(R.id.eventn);
+        destl1=(TextView)findViewById(R.id.locationicon1);
+        destl2=(TextView)findViewById(R.id.destinationm);
 
         ActionNew();
+        sharedpreferences = getSharedPreferences("ContactDetails", Context.MODE_PRIVATE);
         redirect=(Button) findViewById(R.id.redir);
         redirect.setText(R.string.redir);
+        destl1.setText(R.string.location_icon);
+        destl2.setText(R.string.location_icon);
+        ename.setText(getIntent().getExtras().getString("ename"));
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
         redirect.setTypeface(font);
+        destl1.setTypeface(font);
+        destl2.setTypeface(font);
         live_loc=(Button)findViewById(R.id.live_loc);
 
 
@@ -98,6 +115,7 @@ public class GetDirections extends ActionBarActivity {
 
         place=getIntent().getExtras().getString("place");
         Log.i("destination: ",place);
+        dst.setText(place);
         markerPoints = new ArrayList<LatLng>();
         geocoder = new Geocoder(GetDirections.this);
         try {
@@ -145,6 +163,9 @@ public class GetDirections extends ActionBarActivity {
                         }
                     });
 
+                    sharedpreferences.edit().putString("latitude",location.getLatitude()+"").apply();
+                    sharedpreferences.edit().putString("longitude",location.getLongitude()+"").apply();
+
                     MarkerOptions markero=new MarkerOptions().position(origin);
                     MarkerOptions markerd=new MarkerOptions().position(dest);
                     map.addMarker(markero);
@@ -183,6 +204,14 @@ public class GetDirections extends ActionBarActivity {
 
             LatLng origin = new LatLng(location1.getLatitude(),location1.getLongitude());
             LatLng dest = new LatLng(destination.get(0).getLatitude(),destination.get(0).getLongitude());
+            try {
+                source=geocoder.getFromLocation(location1.getLatitude(),location1.getLongitude(),1);
+                Address a=source.get(0);
+                String add=a.getAddressLine(0);
+                src.setText(add);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             MarkerOptions markero=new MarkerOptions().position(origin);
             MarkerOptions markerd=new MarkerOptions().position(origin);
@@ -200,6 +229,16 @@ public class GetDirections extends ActionBarActivity {
             downloadTask.execute(url);
 
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK))
+        {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void ActionNew() {

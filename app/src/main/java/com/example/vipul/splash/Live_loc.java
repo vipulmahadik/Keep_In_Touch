@@ -2,6 +2,7 @@ package com.example.vipul.splash;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -53,6 +56,9 @@ public class Live_loc extends ActionBarActivity {
     String objid;
     Collection<String> memincoll;
     ArrayList<LatLng> markerPoints;
+    ArrayList<MarkerOptions> markerd;
+    Collection<String> c;
+    int x=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,7 @@ public class Live_loc extends ActionBarActivity {
         objid=getIntent().getExtras().getString("objid");
         Log.d("Object id from past: ",objid);
 
+        markerd=new ArrayList<>();
         ParseQuery<ParseObject> mem=ParseQuery.getQuery("eventmember");
         mem.whereEqualTo("e_name",objid).findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -77,19 +84,11 @@ public class Live_loc extends ActionBarActivity {
                     Log.d("Count : ", grpmem.get(x).getString("event_members"));
                     s1.add(grpmem.get(x).getString("event_members"));
                 }
-                Collection<String> c=new ArrayList(s1);
-                ParseUser.getQuery().whereContainedIn("objectId",c).findInBackground(new FindCallback<ParseUser>() {
-                    @Override
-                    public void done(List<ParseUser> parseUsers, ParseException e) {
-                        ulist = new ArrayList<ParseUser>(parseUsers);
-                        for (ParseUser u : ulist){
-                            Log.d("User : ",u.getObjectId()+" "+u.getUsername());
-                            ParseGeoPoint g=(ParseGeoPoint)u.get("coords");
-                            MarkerOptions markerd=new MarkerOptions().position(new LatLng(g.getLatitude(),g.getLongitude())).title(u.getUsername());
-                            map.addMarker(markerd);
-                        }
-                    }
-                });
+                c=new ArrayList(s1);
+                recheck(c);
+
+                Timer timer = new Timer();
+                timer.schedule(new SayHello(), 0, 5000);
             }
         });
 
@@ -99,11 +98,28 @@ public class Live_loc extends ActionBarActivity {
 
         }
 
-
-
-
-
-
+    }
+    class SayHello extends TimerTask {
+        public void run() {
+            recheck(c);
+            Log.d("rrechckonig", "now " + x++);
+        }
+    }
+    private void recheck(Collection<String> c) {
+        ParseUser.getQuery().whereContainedIn("objectId",c).findInBackground(new FindCallback<ParseUser>() {
+        @Override
+        public void done(List<ParseUser> parseUsers, ParseException e) {
+            ulist = new ArrayList<ParseUser>(parseUsers);
+            for (ParseUser u : ulist){
+                Log.d("User : ",u.getObjectId()+" "+u.getUsername());
+                ParseGeoPoint g=(ParseGeoPoint)u.get("coords");
+                markerd.add(new MarkerOptions().position(new LatLng(g.getLatitude(), g.getLongitude())).title(u.getUsername()));
+            }
+            for (MarkerOptions m:markerd){
+                map.addMarker(m);
+            }
+        }
+    });
     }
 
     private void ActionNew() {

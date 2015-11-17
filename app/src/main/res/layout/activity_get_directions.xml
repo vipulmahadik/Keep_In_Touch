@@ -24,28 +24,105 @@
             <fragment
                 android:id="@+id/map1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_height="350dp"
+                android:layout_gravity="center_horizontal|top"
                 class="com.google.android.gms.maps.SupportMapFragment" />
 
-            <Button
-                android:layout_margin="15dp"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:background="@drawable/fab"
-                android:id="@+id/redir"
-                android:layout_gravity="start|bottom"
-                android:textSize="30sp"
-                android:text="A"
-                android:textColor="#fff"
-                />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="230dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:background="@drawable/img">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Get Participant Location"
-                android:id="@+id/live_loc"
-                android:layout_gravity="left|top" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Large Text"
+                    android:id="@+id/eventn"
+                    android:layout_marginLeft="23dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="60dp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="@drawable/fab"
+                    android:id="@+id/redir"
+                    android:layout_gravity="start|bottom"
+                    android:textSize="30sp"
+                    android:text="A"
+                    android:textColor="#fff"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="20dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Small Text"
+                    android:id="@+id/sourcem"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/locationicon1"
+                    android:layout_toEndOf="@+id/locationicon1"
+                    android:paddingLeft="2dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/destinationm"
+                    android:layout_below="@+id/sourcem"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="5dp"
+                    android:text="A"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Find Members"
+                    android:id="@+id/live_loc"
+                    android:layout_gravity="left|top"
+                    android:layout_below="@+id/destinationm"
+                    android:layout_alignRight="@+id/destinationm"
+                    android:layout_alignEnd="@+id/destinationm"
+                    android:layout_marginTop="20dp"
+                    android:background="#ff9998ff"
+                    android:padding="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/locationicon1"
+                    android:layout_alignTop="@+id/sourcem"
+                    android:layout_alignLeft="@+id/redir"
+                    android:layout_alignStart="@+id/redir"
+                    android:text="A"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Small Text"
+                    android:id="@+id/destin"
+                    android:layout_above="@+id/live_loc"
+                    android:layout_toLeftOf="@+id/destinationm"
+                    android:layout_toStartOf="@+id/destinationm"
+                    android:paddingRight="2dp" />
+
+            </RelativeLayout>
 
         </FrameLayout>
     </LinearLayout>

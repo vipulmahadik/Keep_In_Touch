@@ -3,13 +3,17 @@ package com.example.vipul.splash;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -23,6 +27,7 @@ public class Signup extends ActionBarActivity {
     private EditText password;
     private EditText passwordAgainView;
     private Button register;
+    ImageView loginlogo;
 
 
     @Override
@@ -33,6 +38,16 @@ public class Signup extends ActionBarActivity {
         password= (EditText) findViewById(R.id.password);
         passwordAgainView= (EditText) findViewById(R.id.passwordAgain);
         register= (Button) findViewById(R.id.register);
+        loginlogo=(ImageView) findViewById(R.id.login_logo);
+
+        Animation animation= AnimationUtils.loadAnimation(this, R.anim.rotate_login);
+        loginlogo.startAnimation(animation);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loginlogo.setVisibility(View.VISIBLE);
+            }
+        }, 2900);
 
         register.setOnClickListener( new View.OnClickListener() {
             @Override

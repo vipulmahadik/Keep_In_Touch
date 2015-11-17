@@ -22,7 +22,7 @@ public class dispatch extends Activity {
             startActivity(new Intent(this,friend_list.class));
         }
         else{
-            startActivity(new Intent(this,LoginOrSignup.class));
+            startActivity(new Intent(this,Login.class));
         }
         finish();
 

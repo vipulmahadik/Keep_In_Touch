@@ -320,6 +320,6 @@ public class friend_list extends ActionBarActivity {
             });
             return view;
         }
-   }
+    }
 
 }

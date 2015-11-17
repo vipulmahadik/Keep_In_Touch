@@ -3,14 +3,18 @@ package com.example.vipul.splash;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.LogInCallback;
@@ -21,9 +25,10 @@ import com.parse.ParseUser;
 public class Login extends ActionBarActivity {
 
 
-    private Button login;
+    private Button login,signup;
     private EditText username;
     private EditText password;
+    ImageView loginlogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +36,24 @@ public class Login extends ActionBarActivity {
         setContentView(R.layout.activity_login);
         username= (EditText) findViewById(R.id.editText);
         password= (EditText) findViewById(R.id.editText2);
+        signup=(Button) findViewById(R.id.register);
+        loginlogo=(ImageView) findViewById(R.id.login_logo);
 
+        Animation animation= AnimationUtils.loadAnimation(this,R.anim.rotate_login);
+        loginlogo.startAnimation(animation);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loginlogo.setVisibility(View.VISIBLE);
+            }
+        }, 2900);
+
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Login.this,Signup.class));
+            }
+        });
         login=(Button) findViewById(R.id.login);
         login.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -76,7 +76,7 @@ public class group extends ActionBarActivity {
         ActionNew();
 
         ParseQuery<ParseObject> query=ParseQuery.getQuery("group");
-        query.findInBackground(new FindCallback<ParseObject>() {
+        query.addDescendingOrder("createdAt").findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 glist = new ArrayList<ParseObject>(parseObjects);

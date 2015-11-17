@@ -80,7 +80,7 @@ public class EventView extends ActionBarActivity {
 //        listView = (ListView) findViewById(R.id.eventlist);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Events");
-        query.findInBackground(new FindCallback<ParseObject>() {
+        query.addDescendingOrder("createdAt").findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 ulist=new ArrayList<ParseObject>(parseObjects);
@@ -252,7 +252,6 @@ public class EventView extends ActionBarActivity {
                     Intent i=new Intent(EventView.this,EventDetails.class);
                     i.putExtra("objectId",c.getObjectId());
                     startActivity(i);
-                    finish();
                 }
             });
             return view;
