@@ -33,6 +33,7 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,25 +84,11 @@ public class EventDetails extends ActionBarActivity {
         fbshare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FacebookSdk.sdkInitialize(getApplicationContext());
-                callbackManager = CallbackManager.Factory.create();
-                LoginManager.getInstance().registerCallback(callbackManager,
-                        new FacebookCallback<LoginResult>() {
-                            @Override
-                            public void onSuccess(LoginResult loginResult) {
-                                // App code
-                            }
-
-                            @Override
-                            public void onCancel() {
-                                // App code
-                            }
-
-                            @Override
-                            public void onError(FacebookException exception) {
-                                // App code
-                            }
-                        });
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, ParseUser.getCurrentUser().getUsername()+" is goin to event "+name.getText()+" at "+venue.getText());
+                startActivity(Intent.createChooser(shareIntent, "Share your thoughts"));
             }
         });
         direction.setOnClickListener(new View.OnClickListener() {

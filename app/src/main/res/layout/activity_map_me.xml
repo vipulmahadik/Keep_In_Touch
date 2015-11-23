@@ -20,6 +20,11 @@
             android:background="@color/ColorPrimary"
             android:elevation="4dp" />
 
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="10dip"
+            android:background="@drawable/dropshadow" ></View>
+
         <fragment
             android:id="@+id/map"
             android:layout_width="match_parent"

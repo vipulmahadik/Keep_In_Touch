@@ -14,6 +14,11 @@
         android:background="@color/ColorPrimary"
         android:elevation="4dp" />
 
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="5dip"
+            android:background="@drawable/dropshadow" ></View>
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -141,10 +146,9 @@
                     android:layout_height="35dp"
                     android:id="@+id/fbshare"
                     android:src="@drawable/share"
-                    android:layout_below="@+id/createdby"
-                    android:layout_toRightOf="@+id/eventname"
-                    android:layout_toEndOf="@+id/eventname"
-                    android:layout_marginTop="20dp" />
+                    android:layout_alignBottom="@+id/fromvariable"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
 
             </RelativeLayout>
         </ScrollView>

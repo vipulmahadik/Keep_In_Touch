@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -331,6 +332,8 @@ public class group extends ActionBarActivity {
     }
 
     public class UserAdapter1 extends BaseAdapter {
+        private View.OnClickListener dialog;
+
         @Override
         public int getCount() {
             return ulist.size();
@@ -353,11 +356,65 @@ public class group extends ActionBarActivity {
                 view = getLayoutInflater().inflate(R.layout.member_list, null);
             }
             final ParseUser c = getItem(i);
-
+//            view.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    AlertDialog.Builder builderSingle = new AlertDialog.Builder(group.this);
+//                    builderSingle.setIcon(R.drawable.male);
+//                    builderSingle.setTitle("Select One Name:-");
+//
+//                    final ArrayAdapter<ParseObject> arrayAdapter = new ArrayAdapter<>(
+//                            group.this,
+//                            android.R.layout.select_dialog_singlechoice);
+//                    ParseQuery<ParseObject> eve=ParseQuery.getQuery("events");
+//                    eve.findInBackground(new FindCallback<ParseObject>() {
+//                        @Override
+//                        public void done(List<ParseObject> parseObjects, ParseException e) {
+//                            arrayAdapter.addAll(parseObjects);
+//                        }
+//                    });
+//
+//
+//                    builderSingle.setNegativeButton(
+//                            "cancel",
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    dialog.dismiss();
+//                                }
+//                            });
+//
+//                    builderSingle.setAdapter(
+//                            arrayAdapter,
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    ParseObject strName = arrayAdapter.getItem(which);
+//                                    AlertDialog.Builder builderInner = new AlertDialog.Builder(
+//                                            group.this);
+//                                    builderInner.setMessage(strName.getString("ename"));
+//                                    builderInner.setTitle("Your Selected Item is");
+//                                    builderInner.setPositiveButton(
+//                                            "Ok",
+//                                            new DialogInterface.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(
+//                                                        DialogInterface dialog,
+//                                                        int which) {
+//                                                    dialog.dismiss();
+//                                                }
+//                                            });
+//                                    builderInner.show();
+//                                }
+//                            });
+//                    builderSingle.show();
+//                }
+//            });
             TextView label = (TextView) view.findViewById(R.id.label);
             label.setText(c.getUsername());
             return view;
         }
+
     }
 
 

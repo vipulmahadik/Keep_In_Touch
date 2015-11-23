@@ -12,6 +12,12 @@
             android:layout_height="wrap_content"
             android:background="@color/ColorPrimary"
             android:elevation="4dp" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="5dip"
+            android:background="@drawable/dropshadow" ></View>
+
         <fragment
             android:id="@+id/map_live"
             android:layout_width="wrap_content"

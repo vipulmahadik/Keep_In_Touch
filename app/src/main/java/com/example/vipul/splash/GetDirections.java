@@ -202,6 +202,26 @@ public class GetDirections extends ActionBarActivity {
 
             // Setting onclick event listener for the map
 
+            redirect.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                            Uri.parse("google.navigation:q="+destination.get(0).getLatitude()+","+destination.get(0).getLongitude()));
+                    intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                    startActivity(intent);
+                }
+            });
+
+
+            live_loc.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(GetDirections.this,Live_loc.class);
+                    i.putExtra("objid",getIntent().getExtras().getString("objectId"));
+                    startActivity(i);
+                }
+            });
+
             LatLng origin = new LatLng(location1.getLatitude(),location1.getLongitude());
             LatLng dest = new LatLng(destination.get(0).getLatitude(),destination.get(0).getLongitude());
             try {
@@ -289,7 +309,16 @@ public class GetDirections extends ActionBarActivity {
                             startActivity(new Intent(GetDirections.this,EventView.class));
                             break;
                         case 4:
-                            startActivity(new Intent(GetDirections.this,MapMe.class));
+                            startActivity(new Intent(GetDirections.this,invites.class));
+                            break;
+                        case 5:
+                            startActivity(new Intent(GetDirections.this,facebook.class));
+                            break;
+                        case 6:
+                            startActivity(new Intent(GetDirections.this,group.class));
+                            break;
+                        case 7:
+                            startActivity(new Intent(GetDirections.this,EmergencyContact.class));
                             break;
                     }
 

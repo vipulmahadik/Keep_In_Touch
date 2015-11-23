@@ -8,7 +8,7 @@
     <string name="title_activity_signup">Signup</string>
     <string name="title_activity_login">Login</string>
     <string name="title_activity_dispatch">dispatch</string>
-    <string name="title_activity_friend_list">friend_list</string>
+    <string name="title_activity_friend_list">Friends</string>
     <string name="title_activity_chat_item">chat_item</string>
     <string name="title_activity_item_row">item_row</string>
     <string name="title_activity_header">header</string>
@@ -17,10 +17,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_main_activity2">MainActivity2Activity</string>
     <string name="title_activity_drawer_header">drawerheader</string>
-    <string name="title_activity_event_page">EventPage</string>
+    <string name="title_activity_event_page">Create Event</string>
     <string name="title_activity_map_me">MapMe</string>
     <string name="title_activity_event_view">EventView</string>
-    <string name="title_activity_event_details">EventDetails</string>
+    <string name="title_activity_event_details">Event Details</string>
     <string name="title_activity_addmem">addmem</string>
     <string name="title_activity_slider">slider</string>
     <string name="action_hide">Hide Panel</string>
@@ -30,10 +30,10 @@
     <string name="hello"><![CDATA[<b>The Awesome Sliding Up Panel</b><br/> Brought to you by<br/><a href="http://umanoapp.com">http://umanoapp.com</a>]]></string>
     <string name="follow"><![CDATA[Follow us<br/>on <a href="http://twitter.com/umanoapp">Twitter</a>]]></string>
     <string name="title_activity_invites">Invites</string>
-    <string name="title_activity_get_directions">GetDirections</string>
-    <string name="title_activity_facebook">facebook</string>
+    <string name="title_activity_get_directions">Get Directions</string>
+    <string name="title_activity_facebook">Facebook Login</string>
     <string name="facebook_app_id">195866390745121</string>
-    <string name="title_activity_group">group</string>
+    <string name="title_activity_group">Groups</string>
     <string name="title_activity_events">Events</string>
     <string name="icon_heart">&#xf004;</string>
     <string name="friends">&#xf0c0;</string>
@@ -43,7 +43,7 @@
     <string name="location_icon">&#xf041;</string>
     <string name="redir">&#xf124;</string>
     <string name="emer">&#xf0a1;</string>
-    <string name="title_activity_live_loc">Live_loc</string>
-    <string name="title_activity_emergency_contact">EmergencyContact</string>
+    <string name="title_activity_live_loc">Live Loc</string>
+    <string name="title_activity_emergency_contact">Emergency Contact</string>
 
 </resources>

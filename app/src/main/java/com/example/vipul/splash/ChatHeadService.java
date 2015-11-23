@@ -121,8 +121,8 @@ public class ChatHeadService extends Service {
 
             Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
             try {
-                addresses = geocoder.getFromLocation(Double.parseDouble(sharedpreferences.getString("latitude", "")),
-                        Double.parseDouble(sharedpreferences.getString("longitude", "")), 1);
+                addresses = geocoder.getFromLocation(Double.parseDouble(sharedpreferences.getString("latitude", "0")),
+                        Double.parseDouble(sharedpreferences.getString("longitude", "0")), 1);
                 Address a=addresses.get(0);
                 String add=a.getAddressLine(0);
                 String date = (DateFormat.format("dd-MM-yyyy hh:mm:ss", new java.util.Date()).toString());

@@ -35,7 +35,7 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
         icons[2]=R.string.map;
         icons[3]=R.string.invi;
         icons[4]=R.string.faceb;
-        icons[5]=R.string.icon_heart;
+        icons[5]=R.string.friends;
         icons[6]=R.string.emer;
         rows = new ArrayList<>();
         rows.add("Find Friends");

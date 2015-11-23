@@ -17,6 +17,11 @@
             android:titleTextAppearance="@color/light_font"
             />
 
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="5dip"
+            android:background="@drawable/dropshadow" ></View>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">

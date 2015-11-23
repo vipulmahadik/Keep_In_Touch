@@ -5,6 +5,7 @@ import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
@@ -17,6 +18,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,6 +73,8 @@ public class friend_list extends ActionBarActivity {
     DrawerLayout Drawer;                                  // Declaring DrawerLayout
     ActionBarDrawerToggle mDrawerToggle;                  // Declaring Action Bar Drawer Toggle
     ParseUser user= new ParseUser();
+    SharedPreferences sharedpreferences;
+    public static final String MyPREFERENCES = "ContactDetails" ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +83,12 @@ public class friend_list extends ActionBarActivity {
         ButterKnife.inject(this);
 
         setSupportActionBar(toolbar);
-
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        LocationManager locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        Location location1 = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        sharedpreferences.edit().putString("latitude",location1.getLatitude()+"").apply();
+        sharedpreferences.edit().putString("longitude",location1.getLongitude()+"").apply();
+        Log.d(location1.getLatitude()+"",location1.getLongitude()+"");
 
         ActionNew();
     }
