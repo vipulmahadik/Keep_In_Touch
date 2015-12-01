@@ -159,6 +159,9 @@ public class GetDirections extends ActionBarActivity {
                         public void onClick(View view) {
                             Intent i = new Intent(GetDirections.this,Live_loc.class);
                             i.putExtra("objid",getIntent().getExtras().getString("objectId"));
+                            i.putExtra("destlat",destination.get(0).getLatitude()+"");
+                            i.putExtra("destlon",destination.get(0).getLongitude()+"");
+                            i.putExtra("destadd",place);
                             startActivity(i);
                         }
                     });
@@ -218,6 +221,9 @@ public class GetDirections extends ActionBarActivity {
                 public void onClick(View view) {
                     Intent i = new Intent(GetDirections.this,Live_loc.class);
                     i.putExtra("objid",getIntent().getExtras().getString("objectId"));
+                    i.putExtra("destlat",destination.get(0).getLatitude()+"");
+                    i.putExtra("destlon",destination.get(0).getLongitude()+"");
+                    i.putExtra("destadd",place);
                     startActivity(i);
                 }
             });

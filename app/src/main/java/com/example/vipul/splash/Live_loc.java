@@ -1,6 +1,7 @@
 package com.example.vipul.splash;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
@@ -12,14 +13,18 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
@@ -51,6 +56,7 @@ public class Live_loc extends ActionBarActivity {
     DrawerLayout Drawer;                                  // Declaring DrawerLayout
     ActionBarDrawerToggle mDrawerToggle;
     ArrayList<String> s1;
+    Button refresh;
     ArrayList<ParseObject> grpmem,locmem;
     ArrayList<ParseUser> ulist;
     String objid;
@@ -58,6 +64,7 @@ public class Live_loc extends ActionBarActivity {
     ArrayList<LatLng> markerPoints;
     ArrayList<MarkerOptions> markerd;
     Collection<String> c;
+    Timer timer;
     int x=0;
 
     @Override
@@ -69,6 +76,11 @@ public class Live_loc extends ActionBarActivity {
         ActionNew();
         SupportMapFragment fm = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map_live);
         map=fm.getMap();
+
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(Double.parseDouble(getIntent().getExtras().getString("destlat")),Double.parseDouble(getIntent().getExtras().getString("destlon"))))
+                .title("Destination:\n"+getIntent().getExtras().getString("destadd"))
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
 
         objid=getIntent().getExtras().getString("objid");
         Log.d("Object id from past: ",objid);
@@ -86,9 +98,16 @@ public class Live_loc extends ActionBarActivity {
                 }
                 c=new ArrayList(s1);
                 recheck(c);
-
-                Timer timer = new Timer();
-                timer.schedule(new SayHello(), 0, 5000);
+//                refresh=(Button) findViewById(R.id.refresh);
+//                refresh.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        map.clear();
+//                        recheck(c);
+//                    }
+//                });
+                timer = new Timer();
+                timer.schedule(new SayHello(), 3000, 5000);
             }
         });
 
@@ -105,19 +124,38 @@ public class Live_loc extends ActionBarActivity {
             Log.d("rrechckonig", "now " + x++);
         }
     }
+
     private void recheck(Collection<String> c) {
         ParseUser.getQuery().whereContainedIn("objectId",c).findInBackground(new FindCallback<ParseUser>() {
         @Override
         public void done(List<ParseUser> parseUsers, ParseException e) {
             ulist = new ArrayList<ParseUser>(parseUsers);
-            for (ParseUser u : ulist){
-                Log.d("User : ",u.getObjectId()+" "+u.getUsername());
-                ParseGeoPoint g=(ParseGeoPoint)u.get("coords");
-                markerd.add(new MarkerOptions().position(new LatLng(g.getLatitude(), g.getLongitude())).title(u.getUsername()));
+            if (true){
+                map.clear();
+                markerd.clear();
+                map.addMarker(new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(getIntent().getExtras().getString("destlat")),Double.parseDouble(getIntent().getExtras().getString("destlon"))))
+                        .title("Destination:\n"+getIntent().getExtras().getString("destadd"))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                for (ParseUser u : ulist){
+                    Log.d("User : ",u.getObjectId()+" "+u.getUsername());
+                    ParseGeoPoint g=(ParseGeoPoint)u.get("coords");
+                    markerd.add(new MarkerOptions().position(new LatLng(g.getLatitude(), g.getLongitude())).title(u.getUsername()));
+                }
+                for (MarkerOptions m:markerd){
+                    map.addMarker(m);
+                }
             }
-            for (MarkerOptions m:markerd){
-                map.addMarker(m);
+            else{
+                int i=0;
+                for(ParseUser u:ulist){
+                    Log.d("User : ",u.getObjectId()+" "+u.getUsername()+"again");
+                    ParseGeoPoint g=(ParseGeoPoint)u.get("coords");
+                    markerd.get(i).position(new LatLng(g.getLatitude(), g.getLongitude())).title(u.getUsername());
+                    i++;
+                }
             }
+
         }
     });
     }
@@ -243,5 +281,16 @@ public class Live_loc extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK))
+        {
+            timer.cancel();
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
